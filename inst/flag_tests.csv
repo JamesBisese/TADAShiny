@@ -8,8 +8,8 @@ flagType,columnName,flagValue,keep,remove
 "ActivityTypeCode indicates result value is a QC replicate, duplicate, or blank",TADA.ActivityType.Flag,QC_calibration,0,1
 "ActivityTypeCode indicates result value is a QC replicate, duplicate, or blank",TADA.ActivityType.Flag,QC_blank,0,1
 "ActivityTypeCode indicates result value is a QC replicate, duplicate, or blank",TADA.ActivityType.Flag,QC_other,0,1
-"Metadata indicates result(s) are aggregate, high-frequency continuous sensor results, not discrete samples",TADA.ContinuousData.Flag,Discrete,0,0
-"Metadata indicates result(s) are aggregate, high-frequency continuous sensor results, not discrete samples",TADA.ContinuousData.Flag,Continuous,0,1
+Metadata indicates result(s) are continuous (high frequency sensor results or statistics) not discrete,TADA.ContinuousData.Flag,Discrete,0,0
+Metadata indicates result(s) are continuous (high frequency sensor results or statistics) not discrete,TADA.ContinuousData.Flag,Continuous,0,1
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Not Reviewed,0,0
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Invalid,0,1
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Valid,0,0
