@@ -116,8 +116,7 @@ applyFlags <- function(in_table, orgs) {
   # out <- out
 
   # Aggregated continuous data
-  out <- TADA::TADA_FlagContinuousData(out, clean = FALSE, 
-                                       flaggedonly = FALSE)
+  # out <- TADA::TADA_FlagContinuousData(out, clean = FALSE, flaggedonly = FALSE)
 
   # Above WQX Upper Threshold
   out <- TADA::TADA_FlagAboveThreshold(out, clean = FALSE)
