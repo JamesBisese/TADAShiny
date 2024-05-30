@@ -52,9 +52,9 @@ mod_harmonize_np_server <- function(id, tadat) {
       "Target.TADA.MethodSpeciationName",
       "TADA.SpeciationAssumptions",
       "Target.TADA.SpeciationConversionFactor",
-      "TADA.ResultMeasure.MeasureUnitCode",
-      "Target.TADA.ResultMeasure.MeasureUnitCode",
-      "Target.TADA.UnitConversionFactor",
+      #"TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      #"Target.TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      #"Target.TADA.UnitConversionFactor", #no longer in harmonization template
       "HarmonizationGroup"
     )
 
@@ -77,9 +77,9 @@ mod_harmonize_np_server <- function(id, tadat) {
         Target.TADA.MethodSpeciationName = "Target Speciation",
         TADA.SpeciationAssumptions = "Speciation Assumptions",
         Target.TADA.SpeciationConversionFactor = "Speciation Conversion Factor (to AS N or AS P)",
-        TADA.ResultMeasure.MeasureUnitCode = "Unit",
-        Target.TADA.ResultMeasure.MeasureUnitCode = "Target Unit",
-        Target.TADA.UnitConversionFactor = "Unit Conversion Factor",
+        # TADA.ResultMeasure.MeasureUnitCode = "Unit",
+        # Target.TADA.ResultMeasure.MeasureUnitCode = "Target Unit",
+        # Target.TADA.UnitConversionFactor = "Unit Conversion Factor",
         HarmonizationGroup = "Harmonization Group"
       )
       harm$ref <- ref
@@ -123,9 +123,9 @@ mod_harmonize_np_server <- function(id, tadat) {
           Target.TADA.MethodSpeciationName = "Target Speciation",
           TADA.SpeciationAssumptions = "Speciation Assumptions",
           Target.TADA.SpeciationConversionFactor = "Speciation Conversion Factor (to AS N or AS P)",
-          TADA.ResultMeasure.MeasureUnitCode = "Unit",
-          Target.TADA.ResultMeasure.MeasureUnitCode = "Target Unit",
-          Target.TADA.UnitConversionFactor = "Unit Conversion Factor",
+          # TADA.ResultMeasure.MeasureUnitCode = "Unit",
+          # Target.TADA.ResultMeasure.MeasureUnitCode = "Target Unit",
+          # Target.TADA.UnitConversionFactor = "Unit Conversion Factor",
           HarmonizationGroup = "Harmonization Group"
         )
         harm$ref <- ref
@@ -157,7 +157,7 @@ mod_harmonize_np_server <- function(id, tadat) {
         selection = "none", rownames = FALSE
       ) %>%
         DT::formatStyle(columns = names(harm$ref), `font-size` = "12px") %>%
-        DT::formatStyle(columns = c("TADA.CharacteristicName", "TADA.ResultSampleFractionText", "TADA.MethodSpeciationName", "TADA.ResultMeasure.MeasureUnitCode"), backgroundColor = "#2e6da4", color = "white")
+        DT::formatStyle(columns = c("TADA.CharacteristicName", "TADA.ResultSampleFractionText", "TADA.MethodSpeciationName"), backgroundColor = "#2e6da4", color = "white")
     })
 
     # apply synonym ref to data when button is pushed
