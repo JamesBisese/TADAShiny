@@ -264,16 +264,16 @@ mod_censored_data_server <- function(id, tadat) {
         dat[, c(
           "ResultIdentifier",
           "TADA.CharacteristicName",
-          "TADA.DetectionQuantitationLimitMeasure.MeasureValue",
+          "DetectionQuantitationLimitMeasure.MeasureValue",
           "DetectionQuantitationLimitMeasure.MeasureUnitCode",
           "TADA.ResultMeasureValue",
           "TADA.ResultMeasure.MeasureUnitCode"
         )]
       dat <-
         dat %>% dplyr::rename(
-          "Estimated Detection Limit Value" = TADA.ResultMeasureValue,
-          "Original Detection Limit Value" = TADA.DetectionQuantitationLimitMeasure.MeasureValue,
+          "Original Detection Limit Value" = DetectionQuantitationLimitMeasure.MeasureValue,
           "Original Unit" = DetectionQuantitationLimitMeasure.MeasureUnitCode,
+          "Estimated Detection Limit Value" = TADA.ResultMeasureValue,
           "Estimated Unit" = TADA.ResultMeasure.MeasureUnitCode
         )
       censdat$exdat <-
