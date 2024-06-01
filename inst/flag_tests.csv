@@ -11,6 +11,8 @@ flagType,columnName,flagValue,keep,remove
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Not Reviewed,0,0
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Invalid,0,1
 Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Valid,0,0
+Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Accepted,0,0
+Uncommon or suspect characteristic and analytical method combination,TADA.AnalyticalMethod.Flag,Rejected,0,1
 Result value is not numeric or NA and the detection limit value cannot be interpreted because there is a conflict between the detection condition text and detection limit type provided by the data submitter [or the detection limit type is not in WQX domain tables (USGS/NWIS-specific)],TADA.CensoredData.Flag,Detection condition or detection limit is not documented in TADA reference tables.,0,1
 Result value is not numeric or NA and the detection limit value cannot be interpreted because there is a conflict between the detection condition text and detection limit type provided by the data submitter [or the detection limit type is not in WQX domain tables (USGS/NWIS-specific)],TADA.CensoredData.Flag,Detection condition is missing and required for censored data ID.,0,1
 Result value is not numeric or NA and the detection limit value cannot be interpreted because there is a conflict between the detection condition text and detection limit type provided by the data submitter [or the detection limit type is not in WQX domain tables (USGS/NWIS-specific)],TADA.CensoredData.Flag,Conflict between Condition and Limit,0,1
@@ -30,6 +32,11 @@ MeasureQualifierCode indicates result value is suspect,TADA.MeasureQualifierCode
 Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Valid,0,0
 Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Invalid,0,1
 Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Not Reviewed,0,0
+Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Accepted,0,0
+Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Non Standardized,0,0
+Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Nonstandardized,0,0
+Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,NonStandardized,0,0
+Suspect characteristic and speciation combination,TADA.MethodSpeciation.Flag,Rejected,0,1
 Quality Assurance Project Plan (QAPP) document is not available via the ProjectFileUrl,TADA.QAPPDocAvailable,Y_ProjectFileUrlProvided,0,0
 Quality Assurance Project Plan (QAPP) document is not available via the ProjectFileUrl,TADA.QAPPDocAvailable,N,0,1
 Result value is not numeric or NA and no detection limit value is provided,TADA.ResultMeasureValueDataTypes.Flag,Non-ASCII Character(s),0,1
@@ -49,6 +56,11 @@ Suspect characteristic and unit combination,TADA.ResultUnit.Flag,Valid,0,0
 Suspect characteristic and unit combination,TADA.ResultUnit.Flag,NonStandardized,0,0
 Suspect characteristic and unit combination,TADA.ResultUnit.Flag,Invalid,0,1
 Suspect characteristic and unit combination,TADA.ResultUnit.Flag,Not Reviewed,0,0
+Suspect characteristic and unit combination,TADA.ResultUnit.Flag,Accepted,0,0
+Suspect characteristic and unit combination,TADA.ResultUnit.Flag,Rejected,0,1
+Suspect characteristic and unit combination,TADA.ResultUnit.Flag,InvalidChar,0,0
+Suspect characteristic and unit combination,TADA.ResultUnit.Flag,MethodNeeded,0,0
+Suspect characteristic and unit combination,TADA.ResultUnit.Flag,InvalidMediaUnit,0,1
 "Result value(s) above the national upper threshold for a given characteristic, possibly indicating non-sensical value(s)",TADA.ResultValueAboveUpperThreshold.Flag,Suspect,0,1
 "Result value(s) above the national upper threshold for a given characteristic, possibly indicating non-sensical value(s)",TADA.ResultValueAboveUpperThreshold.Flag,Pass,0,0
 "Result value(s) above the national upper threshold for a given characteristic, possibly indicating non-sensical value(s)",TADA.ResultValueAboveUpperThreshold.Flag,Not Reviewed,0,0
@@ -61,5 +73,7 @@ Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Valid,0
 Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,NonStandardized,0,0
 Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Invalid,0,1
 Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Not Reviewed,0,0
+Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Accepted,0,0
+Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Rejected,0,1
 Metadata indicates duplicative uploads of the same results within a single organization,TADA.SingleOrgDup.Flag,Duplicate,0,1
 Metadata indicates duplicative uploads of the same results within a single organization,TADA.SingleOrgDup.Flag,Unique,0,0
