@@ -265,13 +265,13 @@ mod_query_data_server <- function(id, tadat) {
       
       tadat$example_data <- input$example_data
       if (input$example_data == "Shepherdstown (34k results)") {
-        raw <- TADA::Data_NCTCShepherdstown_HUC12
+        raw <- EPATADA::Data_NCTCShepherdstown_HUC12
       }
       if (input$example_data == "Tribal (132k results)") {
-        raw <- TADA::Data_6Tribes_5y
+        raw <- EPATADA::Data_6Tribes_5y
       }
       if (input$example_data == "Nutrients Utah (15k results)") {
-        raw <- TADA::Data_Nutrients_UT
+        raw <- EPATADA::Data_Nutrients_UT
       }
       initializeTable(tadat, raw)
 
@@ -411,7 +411,7 @@ mod_query_data_server <- function(id, tadat) {
       )
       
       # storing the output of TADAdataRetrieval with the user's input choices as a reactive object named "raw" in the tadat list.
-      raw <- TADA::TADA_DataRetrieval(
+      raw <- EPATADA::TADA_DataRetrieval(
         statecode = tadat$statecode,
         countycode = tadat$countycode,
         huc = tadat$huc,

@@ -245,7 +245,7 @@ mod_censored_data_server <- function(id, tadat) {
         od_multiplier <- input$od_mult
       }
       good <-
-        TADA::TADA_SimpleCensoredMethods(
+        EPATADA::TADA_SimpleCensoredMethods(
           good,
           nd_method = trans$actual[trans$input == input$nd_method],
           nd_multiplier = nd_multiplier,
@@ -254,7 +254,7 @@ mod_censored_data_server <- function(id, tadat) {
         )
       tadat$raw <-
         plyr::rbind.fill(removed, good) # stitch good and removed datasets back together in tadat$raw
-      tadat$raw <- TADA::TADA_OrderCols(tadat$raw)
+      tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
       
       # create dataset displayed in table below
       dat <-
@@ -349,7 +349,7 @@ mod_censored_data_server <- function(id, tadat) {
     # runs the summary function when cens button is pushed following group selection
     shiny::observeEvent(input$cens_sumbutton, {
       summary <-
-        TADA::TADA_Stats(censdat$dat, group_cols = input$cens_groups)
+        EPATADA::TADA_Stats(censdat$dat, group_cols = input$cens_groups)
       censdat$summary <-
         summary[, !names(summary) %in% c(
           "UpperFence",

@@ -63,7 +63,7 @@ mod_harmonize_np_server <- function(id, tadat) {
 
     # when user hits harm go button, runs TADA_GetSynonymRef and makes friendly column names for table.
     shiny::observeEvent(input$harm_go, {
-      ref <- TADA::TADA_GetSynonymRef(tadat$raw[tadat$raw$TADA.Remove == FALSE, ])
+      ref <- EPATADA::TADA_GetSynonymRef(tadat$raw[tadat$raw$TADA.Remove == FALSE, ])
       ref <- ref %>% dplyr::arrange(Target.TADA.CharacteristicName, Target.TADA.ResultSampleFractionText, Target.TADA.MethodSpeciationName)
       colns <- names(ref)
       harm$colns <- colns %>% dplyr::recode(
@@ -172,9 +172,9 @@ mod_harmonize_np_server <- function(id, tadat) {
 
       dat <- subset(tadat$raw, tadat$raw$TADA.Remove == FALSE)
       rem <- subset(tadat$raw, tadat$raw$TADA.Remove == TRUE)
-      dat <- TADA::TADA_HarmonizeSynonyms(dat, ref = harm$ref)
+      dat <- EPATADA::TADA_HarmonizeSynonyms(dat, ref = harm$ref)
       tadat$raw <- plyr::rbind.fill(dat, rem)
-      tadat$raw <- TADA::TADA_OrderCols(tadat$raw)
+      tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
 
       # remove the modal once the dataset has been harmonized
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
@@ -191,7 +191,7 @@ mod_harmonize_np_server <- function(id, tadat) {
         "TADA_NPSummationKey.csv"
       },
       content = function(file) {
-        write.csv(TADA::TADA_GetNutrientSummationRef(), file, row.names = FALSE)
+        write.csv(EPATADA::TADA_GetNutrientSummationRef(), file, row.names = FALSE)
       }
     )
 
@@ -212,7 +212,7 @@ mod_harmonize_np_server <- function(id, tadat) {
 
       dat <- subset(tadat$raw, tadat$raw$TADA.Remove == FALSE)
       rem <- subset(tadat$raw, tadat$raw$TADA.Remove == TRUE)
-      dat <- TADA::TADA_CalculateTotalNP(dat, daily_agg = "max")
+      dat <- EPATADA::TADA_CalculateTotalNP(dat, daily_agg = "max")
       dat$TADA.Remove[is.na(dat$TADA.Remove)] <- FALSE
 
       # add new measurements to tadat$removals, all equal FALSE
@@ -223,7 +223,7 @@ mod_harmonize_np_server <- function(id, tadat) {
       names(new_df) <- names(tadat$removals)
       tadat$removals <- plyr::rbind.fill(tadat$removals, new_df)
       tadat$raw <- plyr::rbind.fill(dat, rem)
-      tadat$raw <- TADA::TADA_OrderCols(tadat$raw)
+      tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
       nitrolen <- length(dat$TADA.NutrientSummation.Flag[dat$TADA.NutrientSummation.Flag %in% c("Nutrient summation from one or more subspecies.")])
       phoslen <- length(dat$TADA.NutrientSummation.Flag[dat$TADA.NutrientSummation.Flag %in% c("Nutrient summation from one subspecies.")])
       # remove the modal once the dataset has been harmonized

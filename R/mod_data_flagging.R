@@ -217,7 +217,7 @@ mod_data_flagging_server <- function(id, tadat) {
           session = shiny::getDefaultReactiveDomain()
         )
         tadat$raw <-
-          TADA::TADA_ConvertDepthUnits(tadat$raw, unit = "ft")
+          EPATADA::TADA_ConvertDepthUnits(tadat$raw, unit = "ft")
       }
       if (input$m2f == "inches") {
         shinybusy::show_modal_spinner(
@@ -228,7 +228,7 @@ mod_data_flagging_server <- function(id, tadat) {
         )
         
         tadat$raw <-
-          TADA::TADA_ConvertDepthUnits(tadat$raw, unit = "in")
+          EPATADA::TADA_ConvertDepthUnits(tadat$raw, unit = "in")
         
       }
       if (input$m2f == "meters") {
@@ -239,7 +239,7 @@ mod_data_flagging_server <- function(id, tadat) {
           session = shiny::getDefaultReactiveDomain()
         )
         tadat$raw <-
-          TADA::TADA_ConvertDepthUnits(tadat$raw, unit = "m")
+          EPATADA::TADA_ConvertDepthUnits(tadat$raw, unit = "m")
       }
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
     })

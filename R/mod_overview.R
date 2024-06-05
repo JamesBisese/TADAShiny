@@ -146,7 +146,7 @@ mod_overview_server <- function(id, tadat) {
     # the leaflet map
     output$overview_map <- leaflet::renderLeaflet({
       shiny::req(mapdat$text)
-      TADA::TADA_OverviewMap(tadat$raw[tadat$raw$TADA.Remove == FALSE,])
+      EPATADA::TADA_OverviewMap(tadat$raw[tadat$raw$TADA.Remove == FALSE,])
     })
     
     # histogram showing results collected over time.

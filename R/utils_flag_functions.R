@@ -77,31 +77,31 @@ getCounts <- function(sites, removed_records) {
 }
 # Settings for each flag function in flag page mock up
 applyFlags <- function(in_table, orgs) {
-  out <- TADA::TADA_IDCensoredData(in_table)
+  out <- EPATADA::TADA_IDCensoredData(in_table)
   # Invalid Speciation
-  out <- TADA::TADA_FlagSpeciation(out, clean = "none")
+  out <- EPATADA::TADA_FlagSpeciation(out, clean = "none")
 
   # Invalid fraction
-  out <- TADA::TADA_FlagFraction(out, clean = FALSE)
+  out <- EPATADA::TADA_FlagFraction(out, clean = FALSE)
 
   # Invalid result unit
-  out <- TADA::TADA_FlagResultUnit(out, clean = "none")
+  out <- EPATADA::TADA_FlagResultUnit(out, clean = "none")
   
   # QC rep/blank
-  out <- TADA::TADA_FindQCActivities(out, clean = FALSE)
+  out <- EPATADA::TADA_FindQCActivities(out, clean = FALSE)
 
   # Result is flagged as suspect by data submitter
-  out <- TADA::TADA_FlagMeasureQualifierCode(out, clean = FALSE, define = TRUE)
+  out <- EPATADA::TADA_FlagMeasureQualifierCode(out, clean = FALSE, define = TRUE)
 
   # Invalid analytical method
-  out <- TADA::TADA_FlagMethod(out, clean = FALSE)
+  out <- EPATADA::TADA_FlagMethod(out, clean = FALSE)
   
   # Single org duplicative uploads
-  out <- TADA::TADA_FindPotentialDuplicatesSingleOrg(out)
+  out <- EPATADA::TADA_FindPotentialDuplicatesSingleOrg(out)
 
   # multiple org duplicative uploads
   ## NOTE: THIS FUNCTION USES A REACTIVE OBJECT AS AN INPUT
-  out <- TADA::TADA_FindPotentialDuplicatesMultipleOrgs(out, org_hierarchy = orgs)
+  out <- EPATADA::TADA_FindPotentialDuplicatesMultipleOrgs(out, org_hierarchy = orgs)
 
   # QAPP Not Approved - this flag isn't looking for a TADA-created flag column,
   # so do not need to run any flag function here. If switched ON, remove all data
@@ -109,24 +109,24 @@ applyFlags <- function(in_table, orgs) {
   
   # No QAPP doc available
   if ("ProjectFileUrl" %in% names(out)) {
-    out <- TADA::TADA_FindQAPPDoc(out, clean = FALSE)
+    out <- EPATADA::TADA_FindQAPPDoc(out, clean = FALSE)
   }
 
   # Dataset includes depth profile data - no function for this yet
   # out <- out
 
   # Aggregated continuous data
-  # out <- TADA::TADA_FlagContinuousData(out, clean = FALSE, flaggedonly = FALSE)
+  # out <- EPATADA::TADA_FlagContinuousData(out, clean = FALSE, flaggedonly = FALSE)
 
   # Above WQX Upper Threshold
-  out <- TADA::TADA_FlagAboveThreshold(out, clean = FALSE)
+  out <- EPATADA::TADA_FlagAboveThreshold(out, clean = FALSE)
 
   # Below WQX Lower Threshold
-  out <- TADA::TADA_FlagBelowThreshold(out, clean = FALSE)
+  out <- EPATADA::TADA_FlagBelowThreshold(out, clean = FALSE)
 
   # Invalid coordinates
   out <-
-    TADA::TADA_FlagCoordinates(
+    EPATADA::TADA_FlagCoordinates(
       out,
       clean_outsideUSA = "no",
       clean_imprecise = FALSE,

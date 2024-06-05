@@ -197,7 +197,7 @@ mod_TADA_summary_server <- function(id, tadat) {
         progress_file_name = paste0(tadat$default_outfile, "_prog.RData")
         desc <- writeNarrativeDataFrame(tadat)
         dfs <-
-          list(Data = TADA::TADA_OrderCols(tadat$raw), Parameterization = desc)
+          list(Data = EPATADA::TADA_OrderCols(tadat$raw), Parameterization = desc)
         writeFile(tadat, progress_file_name)
         writexl::write_xlsx(dfs, path = datafile_name)
         utils::zip(zipfile = fname,
@@ -220,7 +220,7 @@ mod_TADA_summary_server <- function(id, tadat) {
         
         # Remove all rows flagged for removal
         dfs <-
-          list(Data = TADA::TADA_OrderCols(tadat$raw[!tadat$raw$TADA.Remove,]), Parameterization = desc)
+          list(Data = EPATADA::TADA_OrderCols(tadat$raw[!tadat$raw$TADA.Remove,]), Parameterization = desc)
         writeFile(tadat, progress_file_name)
         writexl::write_xlsx(dfs, path = datafile_name)
         utils::zip(zipfile = fname,

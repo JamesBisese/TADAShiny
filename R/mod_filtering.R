@@ -74,7 +74,7 @@ mod_filtering_server <- function(id, tadat) {
         tables$dat <-
           subset(tadat$raw, tadat$raw$TADA.Remove == FALSE)
         tables$filter_fields <-
-          TADA::TADA_FieldCounts(tables$dat, display = "key")
+          EPATADA::TADA_FieldCounts(tables$dat, display = "key")
       }
     })
     
@@ -184,7 +184,7 @@ mod_filtering_server <- function(id, tadat) {
       shiny::updateRadioButtons(session, "field_sel", selected = tadat$field_sel)
       if (!is.null(tables$dat)) {
         tables$filter_fields <-
-          TADA::TADA_FieldCounts(tables$dat, display = tadat$field_sel)
+          EPATADA::TADA_FieldCounts(tables$dat, display = tadat$field_sel)
       }
     })
     
