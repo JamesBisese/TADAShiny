@@ -12,6 +12,17 @@
 
 load("inst/extdata/statecodes_df.Rdata")
 load("inst/extdata/query_choices.Rdata")
+
+# new (2024-05-23) list for new Country/Ocean(s) Query the Water Quality Portal option. Not included in saved query_choices file
+library(jsonlite)
+library(dplyr)
+url <- 'https://www.waterqualitydata.us/Codes/countrycode?mimeType=json'
+countryocean_source <- fromJSON(txt=url)
+countryocean_source <- countryocean_source$codes %>% select(-one_of('providers'))
+countryocean_source <- countryocean_source[order(countryocean_source$desc),]
+countryocean_choices <- countryocean_source$value
+names(countryocean_choices) <- countryocean_source$desc
+
 # Last run by EDH on 08/25/23
 # county = readr::read_tsv(url("https://www2.census.gov/geo/docs/reference/codes/files/national_county.txt"), col_names = FALSE)
 # county = county%>%tidyr::separate(X1,into = c("STUSAB","STATE","COUNTY","COUNTY_NAME","COUNTY_ID"), sep=",")
@@ -88,16 +99,19 @@ mod_query_data_ui <- function(id) {
         shiny::textInput(ns("huc"), "Hydrologic Unit", placeholder = "e.g. 020700100103")
       )
     ),
-    shiny::fluidRow(column(
-      4,
-      shiny::selectizeInput(
-        ns("siteid"),
-        "Monitoring Location ID(s)",
-        choices = NULL,
-        multiple = TRUE
-      )
-    )),
-    htmltools::h4("Metadata Filters"),
+    shiny::fluidRow(
+      column(4, 
+             shiny::selectizeInput(ns("siteid"),
+             "Monitoring Location ID(s)",
+             choices = NULL,
+             multiple = TRUE)),
+      column(4, 
+             shiny::selectizeInput(ns("countryocean"),
+             "Country/Ocean(s)", 
+             choices = NULL, 
+             multiple = TRUE))
+    ),
+    htmltools::h4("Metadata Filters"),   
     shiny::fluidRow(
       column(
         4,
@@ -147,7 +161,12 @@ mod_query_data_ui <- function(id) {
       ),
       column(
         4,
-        shiny::selectizeInput(ns("chargroup"), "Characteristic Group", choices = NULL)
+        shiny::selectizeInput(
+          ns("chargroup"), 
+          "Characteristic Group", 
+          choices = NULL,
+          multiple = TRUE
+          )
       ),
       column(
         4,
@@ -157,6 +176,14 @@ mod_query_data_ui <- function(id) {
           choices = NULL,
           multiple = TRUE
         )
+      )
+    ),
+    shiny::fluidRow(
+      column(
+             4,
+             shiny::checkboxGroupInput(ns("providers"), 
+             "Data Source", 
+             c("NWIS (USGS)" = "NWIS", "WQX (EPA)" = "STORET"))
       )
     ),
     shiny::fluidRow(column(
@@ -316,6 +343,15 @@ mod_query_data_server <- function(id, tadat) {
       server = TRUE
     )
     
+    shiny::updateSelectizeInput(
+      session,
+      "countryocean",
+      choices = countryocean_choices,
+      selected = character(0),
+      options = list(placeholder = "Start typing or use drop down menu"),
+      server = TRUE
+    )
+    
     # this observes when the user inputs a state into the drop down and subsets the choices for counties to only those counties within that state.
     shiny::observeEvent(input$state, {
       state_counties <- subset(county, county$STUSAB == input$state)
@@ -349,6 +385,17 @@ mod_query_data_server <- function(id, tadat) {
       } else {
         tadat$countycode <- input$county
       }
+      # this is an overloaded field which can be 2-character Country or Ocean
+      if (is.null(input$countryocean)) {
+        tadat$countrycode <- "null"
+      } else {
+        tadat$countrycode <- input$countryocean
+      }
+      if (is.null(input$providers)) {
+        tadat$providers <- "null"
+      } else {
+        tadat$providers <- input$providers
+      }
       if (input$huc == "") {
         tadat$huc <- "null"
       } else {
@@ -359,7 +406,7 @@ mod_query_data_server <- function(id, tadat) {
       } else {
         tadat$siteType <- input$type
       }
-      if (input$chargroup == "") {
+      if (is.null(input$chargroup)) {
         tadat$characteristicType <- "null"
       } else {
         tadat$characteristicType <- input$chargroup
@@ -377,7 +424,7 @@ mod_query_data_server <- function(id, tadat) {
       if (is.null(input$project)) {
         tadat$project <- "null"
       } else {
-        tadat$project <- input$project
+        tadat$project <- paste(input$project, collapse = ",")
       }
       if (is.null(input$org)) {
         tadat$organization <- "null"
@@ -414,6 +461,7 @@ mod_query_data_server <- function(id, tadat) {
       raw <- TADA::TADA_DataRetrieval(
         statecode = tadat$statecode,
         countycode = tadat$countycode,
+        countrycode = tadat$countrycode,
         huc = tadat$huc,
         siteid = tadat$siteid,
         siteType = tadat$siteType,
@@ -424,6 +472,7 @@ mod_query_data_server <- function(id, tadat) {
         organization = tadat$organization,
         startDate = tadat$startDate,
         endDate = tadat$endDate,
+        providers = tadat$providers,
         applyautoclean = TRUE
       )
       

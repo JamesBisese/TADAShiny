@@ -24,3 +24,11 @@ _snaps
 
 # Trip's testing file
 flagged.csv
+.idea
+renv.lock
+inst/golem-config.yml
+
+.RDataTmp
+renv/activate.R
+app.R
+saved.Rhistory
