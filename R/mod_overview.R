@@ -199,22 +199,22 @@ mod_overview_server <- function(id, tadat) {
     output$overview_barchar <- shiny::renderPlot({
       shiny::req(mapdat$chars)
       ggplot2::ggplot(mapdat$chars,
-                      ggplot2::aes(x = TADA.Chars, y = Result_Count)) +
+                      ggplot2::aes(x = Result_Count, y = TADA.Chars)) +
         ggplot2::geom_bar(stat = "identity",
                           fill = "#005ea2",
                           color = "black") +
-        ggplot2::labs(title = "Results per Characteristic", x = "", y = "Results Count") +
+        ggplot2::labs(title = "Results per Characteristic", x = "Results Count", y = "") +
         ggplot2::theme_classic(base_size = 16) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
         ggplot2::geom_text(
           ggplot2::aes(
-            x = TADA.Chars,
-            y = Result_Count + (0.07 * max(Result_Count)),
+            x = Result_Count + (0.07 * max(Result_Count)),
+            y = TADA.Chars,
             label = Result_Count
           ),
           size = 5,
           color = "black"
-        ) #+
+        )
     })
     
     shiny::observeEvent(input$refresh_overview, {
