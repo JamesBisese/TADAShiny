@@ -94,26 +94,28 @@ mod_figures_server <- function(id, tadat) {
       depthcols <- names(tadat$raw)[grepl("DepthHeightMeasure", names(tadat$raw))]
       depthcols <- depthcols[grepl("TADA.", depthcols)]
       # This must include all columns needed for plots, include those only needed for the hover features
-      selcols <- c("TADA.ComparableDataIdentifier",
-                   "OrganizationFormalName",
-                   "ResultIdentifier",
-                   "groupname",
-                   "MonitoringLocationIdentifier",
-                   "MonitoringLocationName",
-                   "MonitoringLocationTypeName", 
-                   "TADA.LatitudeMeasure", 
-                   "TADA.LongitudeMeasure",
-                   "TADA.ResultMeasureValue", 
-                   "TADA.ResultMeasure.MeasureUnitCode",
-                   "ActivityRelativeDepthName", 
-                   "ActivityStartDate",
-                   "ActivityStartDateTime", 
-                   "TADA.ActivityMediaName", 
-                   "ActivityMediaSubdivisionName", 
-                   "TADA.ResultSampleFractionText",
-                   "TADA.MethodSpeciationName",
-                   "TADA.CharacteristicName",
-                   depthcols)
+      selcols <- c(
+        "TADA.ComparableDataIdentifier",
+        "OrganizationFormalName",
+        "ResultIdentifier",
+        "groupname",
+        "MonitoringLocationIdentifier",
+        "MonitoringLocationName",
+        "MonitoringLocationTypeName",
+        "TADA.LatitudeMeasure",
+        "TADA.LongitudeMeasure",
+        "TADA.ResultMeasureValue",
+        "TADA.ResultMeasure.MeasureUnitCode",
+        "ActivityRelativeDepthName",
+        "ActivityStartDate",
+        "ActivityStartDateTime",
+        "TADA.ActivityMediaName",
+        "ActivityMediaSubdivisionName",
+        "TADA.ResultSampleFractionText",
+        "TADA.MethodSpeciationName",
+        "TADA.CharacteristicName",
+        depthcols
+      )
 
       react$dat <- tadat$raw %>%
         dplyr::filter(TADA.Remove == FALSE, !is.na(TADA.ResultMeasureValue)) %>%
@@ -343,10 +345,11 @@ mod_figures_server <- function(id, tadat) {
     output$scatter2 <- plotly::renderPlotly({
       shiny::req(react$plotdata)
       if (length(unique(react$plotdata$groupname)) > 1) {
-      suppressWarnings(EPATADA::TADA_TwoCharacteristicScatterplot
-                       (react$plotdata, 
-                        id_cols = "groupname", 
-                        groups = unique(react$plotdata$groupname)))
+        suppressWarnings(EPATADA::TADA_TwoCharacteristicScatterplot
+        (react$plotdata,
+          id_cols = "groupname",
+          groups = unique(react$plotdata$groupname)
+        ))
       }
     })
   })

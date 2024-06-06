@@ -33,13 +33,13 @@ app_server <- function(input, output, session) {
   shinyjs::disable(selector = '.nav li a[data-value="Review"]')
 
   # switch that indicates when a file is being loaded
-  tadat$load_progress_file = NA
-  tadat$save_progress_file = NA
-  tadat$flags_present = FALSE
-  job_id = paste0("ts", format(Sys.time(), "%y%m%d%H%M%S"))
-  tadat$default_outfile = paste0("tada_output_", job_id)
-  tadat$job_id = job_id
-  
+  tadat$load_progress_file <- NA
+  tadat$save_progress_file <- NA
+  tadat$flags_present <- FALSE
+  job_id <- paste0("ts", format(Sys.time(), "%y%m%d%H%M%S"))
+  tadat$default_outfile <- paste0("tada_output_", job_id)
+  tadat$job_id <- job_id
+
   # switch to overview tab when tadat$new changes and provide user with window letting them know how many records were automatically flagged for removal upon upload
   # move this to query_data?
   shiny::observeEvent(tadat$new, {
@@ -60,16 +60,16 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
     # JCH - is this necessary?
-    #shiny::req(tadat$raw)
+    # shiny::req(tadat$raw)
     tadat$raw$TADAShiny.tab <- input$tabbar
     tadat$tab <- input$tabbar
   })
 
   # JCH - disabling this for now. I think progress files provide this functionality
   # this observes when the user switches tabs and adds the current tab they're on as a column to their dataset.
-  
+
   # switch to tab user left off on when tadat$reup changes, which only happens when someone uploads a workbook with the column "Removed" in it
-  #shiny::observeEvent(tadat$reup, {
+  # shiny::observeEvent(tadat$reup, {
   #  shiny::showModal(shiny::modalDialog(
   #    title = "Data Loaded",
   #    "Your working dataset has been uploaded and the app switched to the tab where you left off."
@@ -77,5 +77,5 @@ app_server <- function(input, output, session) {
   #  # the switch tab command
   #  shiny::updateTabsetPanel(session = session, inputId = "tabbar", selected = unique(tadat$raw$tab))
   #  tadat$reup <- NULL
-  #})
+  # })
 }

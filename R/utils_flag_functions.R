@@ -3,24 +3,24 @@ prompt_table <- utils::read.csv("inst/flag_prompts.csv")
 test_table <- utils::read.csv("inst/flag_tests.csv")
 # prompt_table = utils::read.csv(app_sys("flag_prompts.csv"))
 # test_table = utils::read.csv(app_sys("flag_tests.csv"))
-prompt_table <- prompt_table[order(prompt_table$Order),]
+prompt_table <- prompt_table[order(prompt_table$Order), ]
 prompts <- prompt_table$Prompt
-active_flags = unique(merge(prompt_table, test_table)$columnName)
+active_flags <- unique(merge(prompt_table, test_table)$columnName)
 levs <- prompt_table$Level
 n_switches <- length(prompts)
 flag_types <- prompt_table$flagType
-flag_prefix = "Flag: "
+flag_prefix <- "Flag: "
 
 flagCensus <- function(raw) {
   # JCH - seems like there are NA values here that aren't getting counted right
   tabular_results <-
     data.frame(matrix(ncol = length(flag_types), nrow = nrow(raw)))
   colnames(tabular_results) <- flag_types
-  
+
   test_table <- subset(test_table, test_table$remove == 1)
   for (flag in flag_types) {
     flag_count <- 0
-    tests <- test_table[test_table$flagType == flag,]
+    tests <- test_table[test_table$flagType == flag, ]
     results <- integer(nrow(raw))
     if (nrow(tests) > 0) {
       for (row in 1:nrow(tests)) {
@@ -39,7 +39,7 @@ flagCensus <- function(raw) {
           if (tests[row, "keep"]) {
             test_results <- !test_results
           } else {
-            
+
           }
           results <- results + test_results
         }
@@ -49,25 +49,27 @@ flagCensus <- function(raw) {
       print(paste0("No tests found for flag ", flag))
     }
   }
-  
+
   return(tabular_results)
 }
 
 getCounts <- function(sites, removed_records) {
-  summary_names <- c("Total in Raw File",
-                     "Total Removed",
-                     "Total in Clean File")
-  
+  summary_names <- c(
+    "Total in Raw File",
+    "Total Removed",
+    "Total in Clean File"
+  )
+
   # Records
   n_raw_records <- length(removed_records)
   n_removed_records <- sum(removed_records)
   n_clean_records <- n_raw_records - n_removed_records
-  
+
   # Sites
   n_raw_sites <- length(unique(sites))
   n_removed_sites <- length(unique(sites[removed_records]))
   n_clean_sites <- n_raw_sites - n_removed_sites
-  
+
   summaryTable <- data.frame(
     row.names = summary_names,
     Records = c(n_raw_records, n_removed_records, n_clean_records),
@@ -86,7 +88,7 @@ applyFlags <- function(in_table, orgs) {
 
   # Invalid result unit
   out <- EPATADA::TADA_FlagResultUnit(out, clean = "none")
-  
+
   # QC rep/blank
   out <- EPATADA::TADA_FindQCActivities(out, clean = FALSE)
 
@@ -95,7 +97,7 @@ applyFlags <- function(in_table, orgs) {
 
   # Invalid analytical method
   out <- EPATADA::TADA_FlagMethod(out, clean = FALSE)
-  
+
   # Single org duplicative uploads
   out <- EPATADA::TADA_FindPotentialDuplicatesSingleOrg(out)
 
@@ -106,7 +108,7 @@ applyFlags <- function(in_table, orgs) {
   # QAPP Not Approved - this flag isn't looking for a TADA-created flag column,
   # so do not need to run any flag function here. If switched ON, remove all data
   # with QAPPApproved == N or NA.
-  
+
   # No QAPP doc available
   if ("ProjectFileUrl" %in% names(out)) {
     out <- EPATADA::TADA_FindQAPPDoc(out, clean = FALSE)
@@ -138,11 +140,11 @@ applyFlags <- function(in_table, orgs) {
 
 checkFlagColumns <- function(dataset) {
   missing <- setdiff(active_flags, names(dataset))
-  found = setdiff(active_flags, missing)
+  found <- setdiff(active_flags, missing)
   if (length(missing) > length(found)) {
     return(FALSE)
   } else {
-    if (length(missing) > 0){
+    if (length(missing) > 0) {
       print("Missing the following fields that are in the csv files:")
       print(missing)
     }

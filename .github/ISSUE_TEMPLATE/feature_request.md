@@ -35,10 +35,21 @@ Add any other context or screenshots about the feature request here.
 
 **Reminders for TADA contributors addressing this issue**
 
-New features should include all of the following work:
+New features and/or edits should include the following work:
 
--   [ ] Create the function/code.
+-   [ ] Create or edit the code.
 
--   [ ] Document all code using comments to describe what is does.
+-   [ ] Document all code using line/inline and/or multi-line/block comments
+    to describe what is does.
 
--   [ ] Create tests.
+-   [ ] Create or edit tests in tests/testthat folder to help prevent and/or 
+    troubleshoot potential future issues.
+
+-   [ ] If your code edits impact other functionality in the shiny 
+    app, ensure those are updated as well.
+
+-   [ ] Run styler::style_pkg(), devtools::document(), and devtools::check() 
+    and address any new notes or issues before creating a pull request.
+
+-   [ ] Run more robust check for releases: devtools::check(manual = TRUE, 
+    remote = TRUE, incoming = TRUE)

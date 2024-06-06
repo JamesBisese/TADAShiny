@@ -52,9 +52,9 @@ mod_harmonize_np_server <- function(id, tadat) {
       "Target.TADA.MethodSpeciationName",
       "TADA.SpeciationAssumptions",
       "Target.TADA.SpeciationConversionFactor",
-      #"TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
-      #"Target.TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
-      #"Target.TADA.UnitConversionFactor", #no longer in harmonization template
+      # "TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      # "Target.TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      # "Target.TADA.UnitConversionFactor", #no longer in harmonization template
       "HarmonizationGroup"
     )
 

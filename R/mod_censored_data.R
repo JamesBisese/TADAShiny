@@ -9,9 +9,11 @@
 #' @importFrom shiny NS tagList
 
 nd_method_options <-
-  c("Multiply detection limit by x",
+  c(
+    "Multiply detection limit by x",
     "Random number between 0 and detection limit",
-    "No change")
+    "No change"
+  )
 od_method_options <- c("Multiply detection limit by x", "No change")
 
 mod_censored_data_ui <- function(id) {
@@ -97,12 +99,12 @@ mod_censored_data_ui <- function(id) {
 mod_censored_data_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+
     # initialize dropdown values
-    
+
     # reactive values specific to this module
     censdat <- shiny::reactiveValues()
-    
+
     # update dataset when on censored data page
     shiny::observeEvent(tadat$tab, {
       shiny::req(tadat$raw)
@@ -119,7 +121,7 @@ mod_censored_data_server <- function(id, tadat) {
           subset(tadat$raw, tadat$raw$TADA.Remove == FALSE) # however, this reactive object has all of the data that were not previously removed and do not have ambiguous detection limit data. This is the "clean" dataset
       }
     })
-    
+
     # pie chart showing breakdown of censored/uncensored data passed through idCensoredData function
     output$id_censplot <- shiny::renderPlot({
       shiny::req(censdat$dat)
@@ -127,15 +129,19 @@ mod_censored_data_server <- function(id, tadat) {
         dplyr::group_by(TADA.CensoredData.Flag) %>%
         dplyr::summarise(num = length(ResultIdentifier))
       piedat$Label <-
-        paste0(piedat$TADA.CensoredData.Flag,
-               " - ",
-               scales::comma(piedat$num),
-               " results")
+        paste0(
+          piedat$TADA.CensoredData.Flag,
+          " - ",
+          scales::comma(piedat$num),
+          " results"
+        )
       # Basic piechart
       ggplot2::ggplot(piedat, ggplot2::aes(x = "", y = num, fill = Label)) +
-        ggplot2::geom_bar(stat = "identity",
-                          width = 1,
-                          color = "white") +
+        ggplot2::geom_bar(
+          stat = "identity",
+          width = 1,
+          color = "white"
+        ) +
         ggplot2::labs(title = "Number of Results per Censored Data Category") +
         ggplot2::coord_polar("y", start = 0) +
         ggplot2::scale_fill_brewer(palette = "Dark2") +
@@ -147,75 +153,79 @@ mod_censored_data_server <- function(id, tadat) {
         ) #+
       # ggplot2::geom_text(ggplot2::aes(label = scales::comma(num)), color = "white", size=6,position = ggplot2::position_stack(vjust = 0.5))
     })
-    
-    
+
+
     # this adds the multiplier numeric input next to the method selection if the nd method selected is to mult det limit by x
-    
+
     output$nd_mult <- shiny::renderUI({
-      init_val = tadat$nd_mult
-      if (is.null(init_val)){
-        init_val = 0.5
+      init_val <- tadat$nd_mult
+      if (is.null(init_val)) {
+        init_val <- 0.5
       }
       if (input$nd_method == nd_method_options[1]) {
         shiny::numericInput(ns("nd_mult"),
-                            "Multiplier (x)",
-                            value = init_val,
-                            min = 0)
+          "Multiplier (x)",
+          value = init_val,
+          min = 0
+        )
       }
     })
-    
+
     # this adds the multiplier numeric input next to the method selection if the od method selected is to mult det limit by x
     output$od_mult <- shiny::renderUI({
-      init_val = tadat$od_mult
-      if (is.null(init_val)){
-        init_val = 0.5
+      init_val <- tadat$od_mult
+      if (is.null(init_val)) {
+        init_val <- 0.5
       }
       if (input$od_method == od_method_options[1]) {
         shiny::numericInput(ns("od_mult"),
-                            "Multiplier (x)",
-                            value = init_val,
-                            min = 0)
+          "Multiplier (x)",
+          value = init_val,
+          min = 0
+        )
       }
     })
-    
-    
+
+
     # initialize global variables for saving/loading
-    
-    tadat$censor_applied = FALSE
-    
+
+    tadat$censor_applied <- FALSE
+
     shiny::observeEvent(tadat$load_progress_file, {
       if (!is.na(tadat$load_progress_file)) {
         shiny::updateSelectizeInput(session,
-                                    "nd_method",
-                                    choices = nd_method_options,
-                                    selected = tadat$nd_method)
+          "nd_method",
+          choices = nd_method_options,
+          selected = tadat$nd_method
+        )
         shiny::updateSelectizeInput(session,
-                                    "od_method",
-                                    choices = od_method_options,
-                                    selected = tadat$od_method)
+          "od_method",
+          choices = od_method_options,
+          selected = tadat$od_method
+        )
         shiny::updateNumericInput(session, "nd_mult", value = tadat$nd_mult)
         shiny::updateNumericInput(session, "od_mult", value = tadat$od_mult)
       }
     })
-    
+
     # Make this part more concise?
     shiny::observeEvent(input$nd_method, {
-      tadat$nd_method = input$nd_method
+      tadat$nd_method <- input$nd_method
     })
-    
+
     shiny::observeEvent(input$nd_mult, {
-      tadat$nd_mult = input$nd_mult
+      tadat$nd_mult <- input$nd_mult
     })
-    
+
     shiny::observeEvent(input$od_method, {
-      tadat$od_method = input$od_method
+      tadat$od_method <- input$od_method
     })
-    
+
     shiny::observeEvent(input$od_mult, {
-      tadat$od_mult = input$od_mult
-      })
-    
-    
+      tadat$od_mult <- input$od_mult
+    })
+
+
     # Button to apply the simple methods to the nd and od results in the dataset.
     shiny::observeEvent(input$apply_methods, {
       shinybusy::show_modal_spinner(
@@ -255,11 +265,13 @@ mod_censored_data_server <- function(id, tadat) {
       tadat$raw <-
         plyr::rbind.fill(removed, good) # stitch good and removed datasets back together in tadat$raw
       tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
-      
+
       # create dataset displayed in table below
       dat <-
-        subset(good,
-               good$TADA.CensoredData.Flag %in% c("Non-Detect", "Over-Detect"))
+        subset(
+          good,
+          good$TADA.CensoredData.Flag %in% c("Non-Detect", "Over-Detect")
+        )
       dat <-
         dat[, c(
           "ResultIdentifier",
@@ -279,15 +291,15 @@ mod_censored_data_server <- function(id, tadat) {
       censdat$exdat <-
         dat[1:10, ] # just show the first 10 records so user can see what happened to data
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
-      tadat$censor_applied = TRUE
+      tadat$censor_applied <- TRUE
     })
-    
+
     # this button appears after someone has applied the OD/ND methods, in case they want to undo and try another method instead
     output$undo_methods <- shiny::renderUI({
       shiny::req(censdat$exdat)
       shiny::actionButton(ns("undo_methods"), "Undo Method Application", style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")
     })
-    
+
     # executes the undo if undo methods button is pressed.
     shiny::observeEvent(input$undo_methods, {
       censdat$exdat <- NULL # reset exdat
@@ -300,9 +312,9 @@ mod_censored_data_server <- function(id, tadat) {
       tadat$raw$TADA.ResultMeasureValueDataTypes.Flag[tadat$raw$TADA.ResultMeasureValueDataTypes.Flag == "Result Value/Unit Estimated from Detection Limit"] <-
         "Result Value/Unit Copied from Detection Limit" # reset data types flag to what it was before simpleCensoredMethods function run
       tadat$raw <- tadat$raw %>% dplyr::select(-TADA.CensoredMethod)
-      tadat$censor_applied = FALSE
+      tadat$censor_applied <- FALSE
     })
-    
+
     # creates a nice table showing an example of how censored data were changed.
     output$see_det <- DT::renderDT({
       shiny::req(censdat$exdat)
@@ -318,7 +330,7 @@ mod_censored_data_server <- function(id, tadat) {
         rownames = FALSE
       )
     })
-    
+
     # from the clean dataset, get all of the column names someone might want to group by when summarizing their data for use in more advanced censored data methods.
     output$cens_groups <- shiny::renderUI({
       shiny::req(censdat$dat)
@@ -345,7 +357,7 @@ mod_censored_data_server <- function(id, tadat) {
         multiple = TRUE
       )
     })
-    
+
     # runs the summary function when cens button is pushed following group selection
     shiny::observeEvent(input$cens_sumbutton, {
       summary <-
@@ -368,7 +380,7 @@ mod_censored_data_server <- function(id, tadat) {
           "Percentile_98th"
         )]
     })
-    
+
     # creates summary table complete with csv button in case someone wants to
     # download the summary table
     output$cens_sumtable <- DT::renderDT({
