@@ -49,7 +49,7 @@ Add any other context about the problem here.
 
 **Reminders for TADA contributors addressing this issue**
 
-Bug fixes should include all the following work:
+Bug fixes should include the following work:
 
 -   [ ] Create or edit the code.
 
@@ -64,6 +64,3 @@ Bug fixes should include all the following work:
 
 -   [ ] Run styler::style_pkg(), devtools::document(), and devtools::check() 
     and address any new notes or issues before creating a pull request.
-
--   [ ] Run more robust check for releases: devtools::check(manual = TRUE, 
-    remote = TRUE, incoming = TRUE)

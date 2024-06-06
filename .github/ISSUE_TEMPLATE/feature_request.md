@@ -50,6 +50,3 @@ New features and/or edits should include the following work:
 
 -   [ ] Run styler::style_pkg(), devtools::document(), and devtools::check() 
     and address any new notes or issues before creating a pull request.
-
--   [ ] Run more robust check for releases: devtools::check(manual = TRUE, 
-    remote = TRUE, incoming = TRUE)
