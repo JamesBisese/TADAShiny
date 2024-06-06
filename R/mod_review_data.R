@@ -108,20 +108,21 @@ mod_review_data_server <- function(id, tadat) {
       shiny::req(review_things$step_rems_plot)
       ggplot2::ggplot(
         review_things$step_rems_plot,
-        ggplot2::aes(x = Step, y = Count)
+        ggplot2::aes(x = Count, y = Step)
       ) +
         ggplot2::geom_bar(
           stat = "identity",
           fill = "#005ea2",
           color = "black"
         ) +
-        ggplot2::labs(title = "Results Retained Following Flagging/Filtering Steps", x = "", y = "Results Count") +
+        ggplot2::scale_y_discrete(limits=rev) + 
+        ggplot2::labs(title = "Results Retained Following Flagging/Filtering Steps", x = "Results Count", y = "") +
         ggplot2::theme_classic(base_size = 16) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
         ggplot2::geom_text(
           ggplot2::aes(
-            x = Step,
-            y = Count + (0.07 * max(Count)),
+            x = Count + (0.07 * max(Count)),
+            y = Step,
             label = Count
           ),
           size = 5,
