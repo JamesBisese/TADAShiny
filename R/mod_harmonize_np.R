@@ -27,7 +27,7 @@ mod_harmonize_np_ui <- function(id) {
     htmltools::h3("2. Total Nitrogen and Phosphorus Summation"),
     htmltools::p("Data generators commonly analyze for several nutrient subspecies that, when added together, can be used to estimate a total nitrogen or phosphorus value. TADA uses the logic provided in ECHO's ", htmltools::a("Nurient Aggregation", href = "https://echo.epa.gov/trends/loading-tool/resources/nutrient-aggregation"), " page to rank and sum subspecies for a given day, location, depth, activity media subdivision, and unit. Total Nitrogen and Total Phosphorus values are added as new results in the dataset. Users may view the nutrient aggregation reference sheet by clicking 'See Summation Reference'. Once data are harmonized, the user may then summarize total N and P.", htmltools::strong("NOTE: "), "When two or more measurements of the same substance occur on the same day at the same location, the function uses the maximum of the group of values to calculate a total nutrient value."),
     shiny::fluidRow(
-      column(3, htmltools::div(style = "margin-top:20px"), shiny::downloadButton(ns("sum_dwn"), "See Summation Reference", style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")),
+      column(3, htmltools::div(style = "margin-top:20px"), shiny::downloadButton(ns("sum_dwn"), "See Summation Reference (.csv)", style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")),
       column(3, htmltools::div(style = "margin-top:20px"), shiny::uiOutput(ns("sum_apply")))
     ),
     htmltools::br()
@@ -52,9 +52,9 @@ mod_harmonize_np_server <- function(id, tadat) {
       "Target.TADA.MethodSpeciationName",
       "TADA.SpeciationAssumptions",
       "Target.TADA.SpeciationConversionFactor",
-      #"TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
-      #"Target.TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
-      #"Target.TADA.UnitConversionFactor", #no longer in harmonization template
+      # "TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      # "Target.TADA.ResultMeasure.MeasureUnitCode", #no longer in harmonization template
+      # "Target.TADA.UnitConversionFactor", #no longer in harmonization template
       "HarmonizationGroup"
     )
 
@@ -63,7 +63,7 @@ mod_harmonize_np_server <- function(id, tadat) {
 
     # when user hits harm go button, runs TADA_GetSynonymRef and makes friendly column names for table.
     shiny::observeEvent(input$harm_go, {
-      ref <- TADA::TADA_GetSynonymRef(tadat$raw[tadat$raw$TADA.Remove == FALSE, ])
+      ref <- EPATADA::TADA_GetSynonymRef(tadat$raw[tadat$raw$TADA.Remove == FALSE, ])
       ref <- ref %>% dplyr::arrange(Target.TADA.CharacteristicName, Target.TADA.ResultSampleFractionText, Target.TADA.MethodSpeciationName)
       colns <- names(ref)
       harm$colns <- colns %>% dplyr::recode(
@@ -90,7 +90,7 @@ mod_harmonize_np_server <- function(id, tadat) {
     output$harm_dwn <- shiny::renderUI({
       shiny::req(harm$ref)
       if (dim(harm$ref)[1] > 1) {
-        shiny::downloadButton(ns("harm_dwn1"), "Download Synonym Table", style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")
+        shiny::downloadButton(ns("harm_dwn1"), "Download Synonym Table (.csv)", style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")
       }
     })
 
@@ -172,9 +172,9 @@ mod_harmonize_np_server <- function(id, tadat) {
 
       dat <- subset(tadat$raw, tadat$raw$TADA.Remove == FALSE)
       rem <- subset(tadat$raw, tadat$raw$TADA.Remove == TRUE)
-      dat <- TADA::TADA_HarmonizeSynonyms(dat, ref = harm$ref)
+      dat <- EPATADA::TADA_HarmonizeSynonyms(dat, ref = harm$ref)
       tadat$raw <- plyr::rbind.fill(dat, rem)
-      tadat$raw <- TADA::TADA_OrderCols(tadat$raw)
+      tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
 
       # remove the modal once the dataset has been harmonized
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
@@ -191,7 +191,7 @@ mod_harmonize_np_server <- function(id, tadat) {
         "TADA_NPSummationKey.csv"
       },
       content = function(file) {
-        write.csv(TADA::TADA_GetNutrientSummationRef(), file, row.names = FALSE)
+        write.csv(EPATADA::TADA_GetNutrientSummationRef(), file, row.names = FALSE)
       }
     )
 
@@ -212,7 +212,7 @@ mod_harmonize_np_server <- function(id, tadat) {
 
       dat <- subset(tadat$raw, tadat$raw$TADA.Remove == FALSE)
       rem <- subset(tadat$raw, tadat$raw$TADA.Remove == TRUE)
-      dat <- TADA::TADA_CalculateTotalNP(dat, daily_agg = "max")
+      dat <- EPATADA::TADA_CalculateTotalNP(dat, daily_agg = "max")
       dat$TADA.Remove[is.na(dat$TADA.Remove)] <- FALSE
 
       # add new measurements to tadat$removals, all equal FALSE
@@ -223,7 +223,7 @@ mod_harmonize_np_server <- function(id, tadat) {
       names(new_df) <- names(tadat$removals)
       tadat$removals <- plyr::rbind.fill(tadat$removals, new_df)
       tadat$raw <- plyr::rbind.fill(dat, rem)
-      tadat$raw <- TADA::TADA_OrderCols(tadat$raw)
+      tadat$raw <- EPATADA::TADA_OrderCols(tadat$raw)
       nitrolen <- length(dat$TADA.NutrientSummation.Flag[dat$TADA.NutrientSummation.Flag %in% c("Nutrient summation from one or more subspecies.")])
       phoslen <- length(dat$TADA.NutrientSummation.Flag[dat$TADA.NutrientSummation.Flag %in% c("Nutrient summation from one subspecies.")])
       # remove the modal once the dataset has been harmonized

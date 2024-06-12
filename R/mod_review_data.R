@@ -37,9 +37,9 @@ mod_review_data_ui <- function(id) {
 mod_review_data_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+
     review_things <- shiny::reactiveValues()
-    
+
     shiny::observeEvent(input$review_go, {
       removals <- tadat$removals
       sel <- which(removals == TRUE, arr.ind = TRUE)
@@ -47,14 +47,16 @@ mod_review_data_server <- function(id, tadat) {
       if (length(sel) > 0) {
         removals[sel] <- names(removals)[sel[, "col"]]
         removals[removals == FALSE] <- ""
-        tadat$raw$TADA.RemovalReason <- apply(removals, 1,
-                                              function(row) {
-                                                paste(row[nzchar(row)], collapse = ", ")
-                                              })
+        tadat$raw$TADA.RemovalReason <- apply(
+          removals, 1,
+          function(row) {
+            paste(row[nzchar(row)], collapse = ", ")
+          }
+        )
       } else {
         tadat$raw$TADA.RemovalReason <- NA
       }
-      
+
       # data for bar chart - this is real rough
       step_rems <- sort_removals(tadat$removals)
       total <- dim(tadat$raw)[1]
@@ -66,7 +68,7 @@ mod_review_data_server <- function(id, tadat) {
         ifelse(length(step_rems$Count[step_rems$Reason %in% "Filter only"]) > 0, step_rems$Count[step_rems$Reason %in% "Filter only"], 0)
       mrfl <- total - flag - filtflag
       mrfi <- mrfl - filter
-      
+
       step_rems_plot <-
         data.frame(
           Step = c(
@@ -86,60 +88,67 @@ mod_review_data_server <- function(id, tadat) {
           )
         )
       review_things$step_rems_plot <- step_rems_plot
-      
+
       # data for pie chart
       rem_reas <-
-        data.frame(Reason = names(tadat$removals),
-                   Count = apply(tadat$removals, 2, sum))
+        data.frame(
+          Reason = names(tadat$removals),
+          Count = apply(tadat$removals, 2, sum)
+        )
       rem_reas <- subset(rem_reas, rem_reas$Count > 0)
       if (nrow(rem_reas) > 0) {
         review_things$rem_reas <- rem_reas
-      } else{
+      } else {
         review_things$rem_reas <- data.frame(Reason = "No Removals", Count = 1)
       }
     })
-    
+
     # characteristics bar chart showing top characteristics by result number in dataset
     output$review_barchar <- shiny::renderPlot({
       shiny::req(review_things$step_rems_plot)
-      ggplot2::ggplot(review_things$step_rems_plot,
-                      ggplot2::aes(x = Step, y = Count)) +
-        ggplot2::geom_bar(stat = "identity",
-                          fill = "#005ea2",
-                          color = "black") +
-        ggplot2::labs(title = "Results Retained Following Flagging/Filtering Steps", x = "", y = "Results Count") +
+      ggplot2::ggplot(
+        review_things$step_rems_plot,
+        ggplot2::aes(x = Count, y = Step)
+      ) +
+        ggplot2::geom_bar(
+          stat = "identity",
+          fill = "#005ea2",
+          color = "black"
+        ) +
+        ggplot2::scale_y_discrete(limits=rev) + 
+        ggplot2::labs(title = "Results Retained Following Flagging/Filtering Steps", x = "Results Count", y = "") +
         ggplot2::theme_classic(base_size = 16) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
         ggplot2::geom_text(
           ggplot2::aes(
-            x = Step,
-            y = Count + (0.07 * max(Count)),
+            x = Count + (0.07 * max(Count)),
+            y = Step,
             label = Count
           ),
           size = 5,
           color = "black"
         ) #+
     })
-    
+
     output$reason_pie <- shiny::renderPlot({
       shiny::req(review_things$rem_reas)
       dat <- review_things$rem_reas
       if (nrow(review_things$rem_reas) > 1) {
         dat$Legend <- paste0(dat$Reason, " - ", dat$Count, " results")
-      } else{
+      } else {
         dat$Legend <- paste0(dat$Reason)
       }
       dat <- dat %>%
         dplyr::rowwise() %>%
-        dplyr::mutate(Legend = TADA::TADA_InsertBreaks(Legend, len = 100))
-      
+        dplyr::mutate(Legend = EPATADA::TADA_InsertBreaks(Legend, len = 100))
+
       # define number of colors required for pie chart
       colorCount <- length(unique(dat$Legend))
-      
+
       # define color palette
       getPalette <-
         grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))
-      
+
       # create pie chart
       ggplot2::ggplot(dat, ggplot2::aes(x = "", y = Count, fill = Legend)) +
         ggplot2::scale_fill_manual(values = getPalette(colorCount), name = "Removal Reasons") +

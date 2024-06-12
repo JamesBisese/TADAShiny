@@ -58,24 +58,26 @@ mod_query_data_ui <- function(id) {
     htmltools::br(),
     # styling several fluid rows with columns to hold the input drop down widgets
     htmltools::h4("Date Range"),
-    shiny::fluidRow(column(
-      4,
-      shiny::dateInput(
-        ns("startDate"),
-        "Start Date",
-        format = "yyyy-mm-dd",
-        startview = "year"
+    shiny::fluidRow(
+      column(
+        4,
+        shiny::dateInput(
+          ns("startDate"),
+          "Start Date",
+          format = "yyyy-mm-dd",
+          startview = "year"
+        )
+      ),
+      column(
+        4,
+        shiny::dateInput(
+          ns("endDate"),
+          "End Date",
+          format = "yyyy-mm-dd",
+          startview = "year"
+        )
       )
     ),
-    column(
-      4,
-      shiny::dateInput(
-        ns("endDate"),
-        "End Date",
-        format = "yyyy-mm-dd",
-        startview = "year"
-      )
-    )),
     htmltools::h4("Location Information"),
     shiny::fluidRow(
       column(4, shiny::selectizeInput(ns("state"), "State", choices = NULL)),
@@ -162,7 +164,8 @@ mod_query_data_ui <- function(id) {
     shiny::fluidRow(column(
       4,
       shiny::actionButton(ns("querynow"), "Run Query", shiny::icon("cloud"),
-                          style = "color: #fff; background-color: #337ab7; border-color: #2e6da4")
+        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+      )
     )),
     htmltools::hr(),
     shiny::fluidRow(
@@ -173,8 +176,7 @@ mod_query_data_ui <- function(id) {
                                     app to iterate on. Data must also be formatted in the EPA Water Quality eXchange (WQX) schema to leverage
                                     this tool. You may reach out to the WQX helpdesk at WQX@epa.gov for assistance preparing and submitting your data
                                     to the WQP through EPA's WQX."
-      )
-      ),
+      )),
       # widget to upload WQP profile or WQX formatted spreadsheet
       column(
         9,
@@ -187,20 +189,18 @@ mod_query_data_ui <- function(id) {
         )
       )
     ),
-    
     htmltools::hr(),
     shiny::fluidRow(
       htmltools::h3("Optional: Upload Progress File"),
       htmltools::HTML((
         "Upload a progress file from your computer. This upload feature only accepts data in the .RData format.
-        The TADA Shiny application keeps track of all user selections, and makes a .RData file 
+        The TADA Shiny application keeps track of all user selections, and makes a .RData file
         available for download at any time. If you saved a progress file you generated during a
         previous use of the TADA Shiny application, then it can be uploaded here and used
-        to automatically parameterize the TADA Shiny app with the same selections. This file can 
-        be used to regenerate a dataset with the same decisions as before, or can be used 
+        to automatically parameterize the TADA Shiny app with the same selections. This file can
+        be used to regenerate a dataset with the same decisions as before, or can be used
         to apply the same user selctions to a new dataset"
-      )
-      ),
+      )),
       # widget to upload WQP profile or WQX formatted spreadsheet
       column(
         9,
@@ -222,9 +222,9 @@ mod_query_data_ui <- function(id) {
 mod_query_data_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+
     # read in the excel spreadsheet dataset if this input reactive object is populated via fileInput and define as tadat$raw
-    shiny::observeEvent(input$file,{
+    shiny::observeEvent(input$file, {
       # a modal that pops up showing it's working on querying the portal
       shinybusy::show_modal_spinner(
         spin = "double-bounce",
@@ -232,27 +232,26 @@ mod_query_data_server <- function(id, tadat) {
         text = "Uploading dataset...",
         session = shiny::getDefaultReactiveDomain()
       )
-      
+
       # user uploaded data
       raw <-
         suppressWarnings(readxl::read_excel(input$file$datapath, sheet = 1))
       raw$TADA.Remove <- NULL
       initializeTable(tadat, raw)
-      if (!is.null(tadat$original_source)){
+      if (!is.null(tadat$original_source)) {
         tadat$original_source <- "Upload"
       }
-      
+
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
-      
     })
-    
+
     # Read the TADA progress file
     shiny::observe({
       shiny::req(input$progress_file)
       # user uploaded data
       readFile(tadat, input$progress_file$datapath)
     })
-    
+
     # if user presses example data button, make tadat$raw the nutrients dataset contained within the TADA package.
     shiny::observeEvent(input$example_data_go, {
       # a modal that pops up showing it's working on querying the portal
@@ -262,23 +261,22 @@ mod_query_data_server <- function(id, tadat) {
         text = "Loading example data...",
         session = shiny::getDefaultReactiveDomain()
       )
-      
+
       tadat$example_data <- input$example_data
       if (input$example_data == "Shepherdstown (34k results)") {
-        raw <- TADA::Data_NCTCShepherdstown_HUC12
+        raw <- EPATADA::Data_NCTCShepherdstown_HUC12
       }
       if (input$example_data == "Tribal (132k results)") {
-        raw <- TADA::Data_6Tribes_5y
+        raw <- EPATADA::Data_6Tribes_5y
       }
       if (input$example_data == "Nutrients Utah (15k results)") {
-        raw <- TADA::Data_Nutrients_UT
+        raw <- EPATADA::Data_Nutrients_UT
       }
       initializeTable(tadat, raw)
 
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
-      
     })
-    
+
     # this section has widget update commands for the selectizeinputs that have a lot of possible selections - shiny suggested hosting the choices server-side rather than ui-side
     shiny::updateSelectizeInput(
       session,
@@ -289,9 +287,10 @@ mod_query_data_server <- function(id, tadat) {
       server = TRUE
     )
     shiny::updateSelectizeInput(session,
-                                "org",
-                                choices = c(orgs),
-                                server = TRUE)
+      "org",
+      choices = c(orgs),
+      server = TRUE
+    )
     shiny::updateSelectizeInput(
       session,
       "chargroup",
@@ -301,13 +300,15 @@ mod_query_data_server <- function(id, tadat) {
       server = TRUE
     )
     shiny::updateSelectizeInput(session,
-                                "characteristic",
-                                choices = c(chars),
-                                server = TRUE)
+      "characteristic",
+      choices = c(chars),
+      server = TRUE
+    )
     shiny::updateSelectizeInput(session,
-                                "project",
-                                choices = c(projects),
-                                server = TRUE)
+      "project",
+      choices = c(projects),
+      server = TRUE
+    )
     shiny::updateSelectizeInput(
       session,
       "siteid",
@@ -315,7 +316,7 @@ mod_query_data_server <- function(id, tadat) {
       options = list(placeholder = "Start typing or use drop down menu"),
       server = TRUE
     )
-    
+
     # this observes when the user inputs a state into the drop down and subsets the choices for counties to only those counties within that state.
     shiny::observeEvent(input$state, {
       state_counties <- subset(county, county$STUSAB == input$state)
@@ -324,16 +325,18 @@ mod_query_data_server <- function(id, tadat) {
         "county",
         choices = c(unique(state_counties$COUNTY_NAME)),
         selected = character(0),
-        options = list(placeholder = "Select county",
-                       maxItems = 1),
+        options = list(
+          placeholder = "Select county",
+          maxItems = 1
+        ),
         server = TRUE
       )
     })
-    
+
     # remove the modal once the dataset has been pulled
     shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
-    
-    
+
+
     # this event observer is triggered when the user hits the "Query Now" button, and then runs the TADAdataRetrieval function
     shiny::observeEvent(input$querynow, {
       tadat$original_source <- "Query"
@@ -409,9 +412,9 @@ mod_query_data_server <- function(id, tadat) {
         text = "Querying WQP database...",
         session = shiny::getDefaultReactiveDomain()
       )
-      
+
       # storing the output of TADAdataRetrieval with the user's input choices as a reactive object named "raw" in the tadat list.
-      raw <- TADA::TADA_DataRetrieval(
+      raw <- EPATADA::TADA_DataRetrieval(
         statecode = tadat$statecode,
         countycode = tadat$countycode,
         huc = tadat$huc,
@@ -426,10 +429,10 @@ mod_query_data_server <- function(id, tadat) {
         endDate = tadat$endDate,
         applyautoclean = TRUE
       )
-      
+
       # remove the modal once the dataset has been pulled
       shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
-      
+
       # show a modal dialog box when tadat$raw is empty and the query didn't return any records.
       # but if tadat$raw isn't empty, perform some initial QC of data that aren't media type water or have NA Resultvalue and no detection limit data
       if (dim(raw)[1] < 1) {
@@ -443,12 +446,12 @@ mod_query_data_server <- function(id, tadat) {
         initializeTable(tadat, raw)
       }
     })
-    
+
     # Update the run parameters if example data is selected
     shiny::observeEvent(input$example_data_go, {
       tadat$original_source <- "Example"
     })
-    
+
     # Populate the boxes if a progress file is loaded
     shiny::observeEvent(tadat$load_progress_file, {
       if (!is.na(tadat$load_progress_file)) {
@@ -461,8 +464,9 @@ mod_query_data_server <- function(id, tadat) {
           shiny::updateSelectizeInput(session, "siteid", selected = tadat$siteid)
           shiny::updateSelectizeInput(session, "type", selected = tadat$siteType)
           shiny::updateSelectizeInput(session,
-                                      "characteristic",
-                                      selected = tadat$characteristicName)
+            "characteristic",
+            selected = tadat$characteristicName
+          )
           shiny::updateSelectizeInput(session, "chargroup", selected = tadat$characteristicType)
           shiny::updateSelectizeInput(session, "media", selected = tadat$sampleMedia)
           shiny::updateSelectizeInput(session, "project", selected = tadat$project)
@@ -471,9 +475,7 @@ mod_query_data_server <- function(id, tadat) {
           shiny::updateDateInput(session, "endDate", value = tadat$endDate)
         }
       }
-      
     })
-    
   })
 }
 
@@ -499,7 +501,7 @@ initializeTable <- function(tadat, raw) {
     # Set flagging column to FALSE
     raw$TADA.Remove <- FALSE
   }
-  
+
   removals <- data.frame(matrix(nrow = nrow(raw), ncol = 0))
   tadat$raw <- raw
   tadat$removals <- removals

@@ -17,7 +17,7 @@ css <- "
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
-    # This function automatically incorporates the epa styles.css file included 
+    # This function automatically incorporates the epa styles.css file included
     # in the www folder. Downloaded from https://www.epa.gov/web-policies-and-procedures/web-standards-look-and-feel-template
     # styles.css hosted locally in this app includes a fix (for compatibility with leaflet and plotly)
     golem_add_external_resources(),
@@ -80,7 +80,7 @@ app_ui <- function(request) {
       ),
       htmltools::hr(),
       mod_TADA_summary_ui("TADA_summary_1"),
-      # adds epa footer html 
+      # adds epa footer html
       shiny::includeHTML(app_sys("app/www/footer.html"))
     )
   )

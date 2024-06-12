@@ -41,7 +41,7 @@ mod_TADA_summary_ui <- function(id) {
         )))),
         shiny::fluidRow(column(6, shiny::uiOutput(ns(
           "dwn_final"
-        ))))#,
+        )))) # ,
         # shiny::fluidRow(column(
         #   6,
         #   shiny::fileInput(
@@ -75,25 +75,25 @@ mod_TADA_summary_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
     # reactive list to hold reactive objects specific to this module
-    summary_things = shiny::reactiveValues()
-    
-    
+    summary_things <- shiny::reactiveValues()
+
+
     # calculate the stats needed to fill the summary box
     shiny::observe({
       shiny::req(tadat$raw)
       summary_things$rem_rec <-
         length(tadat$raw$ResultIdentifier[tadat$raw$TADA.Remove ==
-                                            TRUE])
+          TRUE])
       summary_things$clean_rec <-
         length(tadat$raw$ResultIdentifier[tadat$raw$TADA.Remove ==
-                                            FALSE])
+          FALSE])
       clean_sites <-
         unique(tadat$raw$MonitoringLocationIdentifier[tadat$raw$TADA.Remove ==
-                                                        FALSE])
+          FALSE])
       summary_things$clean_site <- length(clean_sites)
       summary_things$rem_site <-
         length(unique(tadat$raw$MonitoringLocationIdentifier[!tadat$raw$MonitoringLocationIdentifier %in%
-                                                               clean_sites]))
+          clean_sites]))
       summary_things$removals <- sort_removals(tadat$removals)
     })
     summary_things$removals <- data.frame(matrix(
@@ -101,7 +101,7 @@ mod_TADA_summary_server <- function(id, tadat) {
       nrow = 0,
       dimnames = list(NULL, c("Reason", "Count"))
     ))
-    
+
     # output$removal_summary = DT::renderDataTable(
     #   summary_things$removals,
     #   escape = FALSE,
@@ -112,7 +112,7 @@ mod_TADA_summary_server <- function(id, tadat) {
     #     language = list(zeroRecords = "No records removed")
     #   )
     # )
-    
+
     # summary text = total records
     output$rec_tot <- shiny::renderText({
       if (is.null(tadat$raw)) {
@@ -126,8 +126,10 @@ mod_TADA_summary_server <- function(id, tadat) {
       if (is.null(tadat$raw)) {
         "Total Results Flagged for Removal: 0"
       } else {
-        paste0("Total Results Flagged for Removal: ",
-               scales::comma(summary_things$rem_rec))
+        paste0(
+          "Total Results Flagged for Removal: ",
+          scales::comma(summary_things$rem_rec)
+        )
       }
     })
     # summary text = total records in clean
@@ -135,8 +137,10 @@ mod_TADA_summary_server <- function(id, tadat) {
       if (is.null(tadat$raw)) {
         "Total Results Retained: 0"
       } else {
-        paste0("Total Results Retained: ",
-               scales::comma(summary_things$clean_rec))
+        paste0(
+          "Total Results Retained: ",
+          scales::comma(summary_things$clean_rec)
+        )
       }
     })
     # summary text = total sites
@@ -154,8 +158,10 @@ mod_TADA_summary_server <- function(id, tadat) {
       if (is.null(tadat$raw)) {
         "Total Sites Flagged for Removal: 0"
       } else {
-        paste0("Total Sites Flagged for Removal: ",
-               scales::comma(summary_things$rem_site))
+        paste0(
+          "Total Sites Flagged for Removal: ",
+          scales::comma(summary_things$rem_site)
+        )
       }
     })
     # summary text = total sites in clean file
@@ -163,28 +169,32 @@ mod_TADA_summary_server <- function(id, tadat) {
       if (is.null(tadat$raw)) {
         "Total Sites Retained: 0"
       } else {
-        paste0("Total Sites Retained: ",
-               scales::comma(summary_things$clean_site))
+        paste0(
+          "Total Sites Retained: ",
+          scales::comma(summary_things$clean_site)
+        )
       }
     })
-    
+
     # download dataset button - only appears if there data exists in the app already
     output$dwn_working <- shiny::renderUI({
       shiny::req(tadat$raw)
       shiny::downloadButton(ns("download_working"),
-                            "Download Working Dataset (.zip)",
-                            style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
-                            contentType = "application/zip")
+        "Download Working Dataset (.zip)",
+        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+        contentType = "application/zip"
+      )
     })
-    
+
     output$dwn_final <- shiny::renderUI({
       shiny::req(tadat$raw)
       shiny::downloadButton(ns("download_final"),
-                            "Download Final Dataset (.zip)",
-                            style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
-                            contentType = "application/zip")
+        "Download Final Dataset (.zip)",
+        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+        contentType = "application/zip"
+      )
     })
-    
+
     output$download_working <- shiny::downloadHandler(
       filename = function() {
         paste0(tadat$default_outfile, "_working.zip")
@@ -193,19 +203,21 @@ mod_TADA_summary_server <- function(id, tadat) {
         fs <- c()
         tmpdir <- tempdir()
         setwd(tempdir())
-        datafile_name = paste0(tadat$default_outfile, ".xlsx")
-        progress_file_name = paste0(tadat$default_outfile, "_prog.RData")
+        datafile_name <- paste0(tadat$default_outfile, ".xlsx")
+        progress_file_name <- paste0(tadat$default_outfile, "_prog.RData")
         desc <- writeNarrativeDataFrame(tadat)
         dfs <-
-          list(Data = TADA::TADA_OrderCols(tadat$raw), Parameterization = desc)
+          list(Data = EPATADA::TADA_OrderCols(tadat$raw), Parameterization = desc)
         writeFile(tadat, progress_file_name)
         writexl::write_xlsx(dfs, path = datafile_name)
-        utils::zip(zipfile = fname,
-            files = c(datafile_name, progress_file_name))
+        utils::zip(
+          zipfile = fname,
+          files = c(datafile_name, progress_file_name)
+        )
       },
       contentType = "application/zip"
     )
-    
+
     output$download_final <- shiny::downloadHandler(
       filename = function() {
         paste0(tadat$default_outfile, "_final.zip")
@@ -214,21 +226,23 @@ mod_TADA_summary_server <- function(id, tadat) {
         fs <- c()
         tmpdir <- tempdir()
         setwd(tempdir())
-        datafile_name = paste0(tadat$default_outfile, ".xlsx")
-        progress_file_name = paste0(tadat$default_outfile, "_prog.RData")
+        datafile_name <- paste0(tadat$default_outfile, ".xlsx")
+        progress_file_name <- paste0(tadat$default_outfile, "_prog.RData")
         desc <- writeNarrativeDataFrame(tadat)
-        
+
         # Remove all rows flagged for removal
         dfs <-
-          list(Data = TADA::TADA_OrderCols(tadat$raw[!tadat$raw$TADA.Remove,]), Parameterization = desc)
+          list(Data = EPATADA::TADA_OrderCols(tadat$raw[!tadat$raw$TADA.Remove, ]), Parameterization = desc)
         writeFile(tadat, progress_file_name)
         writexl::write_xlsx(dfs, path = datafile_name)
-        utils::zip(zipfile = fname,
-                   files = c(datafile_name, progress_file_name))
+        utils::zip(
+          zipfile = fname,
+          files = c(datafile_name, progress_file_name)
+        )
       },
       contentType = "application/zip"
     )
-    
+
     shiny::observeEvent(input$disclaimer, {
       shiny::showModal(
         shiny::modalDialog(
@@ -251,7 +265,7 @@ sort_removals <- function(removal_table) {
       ))
     colnames(results) <- prefixes
     results[is.na(results)] <- FALSE
-    
+
     for (prefix in prefixes) {
       active_cols <- fields[dplyr::starts_with(prefix, vars = fields)]
       if (length(active_cols) > 0) {
@@ -264,13 +278,13 @@ sort_removals <- function(removal_table) {
     results["Flag and Filter"] <- (results$Flag & results$Filter)
     results["Filter only"] <- ((totals == 1) & results$Filter)
     results <-
-      dplyr::select(results,-intersect(prefixes, colnames(results)))
+      dplyr::select(results, -intersect(prefixes, colnames(results)))
     results$Many <- rowSums(results) > 2
     results$Retained <- !apply(results, 1, any)
     counts <- colSums(results)
     counts <-
       data.frame(Reason = names(counts), Count = as.vector(counts))
-    counts <- counts[(counts$Count > 0),]
+    counts <- counts[(counts$Count > 0), ]
     return(counts)
   }
 }

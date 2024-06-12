@@ -94,26 +94,28 @@ mod_figures_server <- function(id, tadat) {
       depthcols <- names(tadat$raw)[grepl("DepthHeightMeasure", names(tadat$raw))]
       depthcols <- depthcols[grepl("TADA.", depthcols)]
       # This must include all columns needed for plots, include those only needed for the hover features
-      selcols <- c("TADA.ComparableDataIdentifier",
-                   "OrganizationFormalName",
-                   "ResultIdentifier",
-                   "groupname",
-                   "MonitoringLocationIdentifier",
-                   "MonitoringLocationName",
-                   "MonitoringLocationTypeName", 
-                   "TADA.LatitudeMeasure", 
-                   "TADA.LongitudeMeasure",
-                   "TADA.ResultMeasureValue", 
-                   "TADA.ResultMeasure.MeasureUnitCode",
-                   "ActivityRelativeDepthName", 
-                   "ActivityStartDate",
-                   "ActivityStartDateTime", 
-                   "TADA.ActivityMediaName", 
-                   "ActivityMediaSubdivisionName", 
-                   "TADA.ResultSampleFractionText",
-                   "TADA.MethodSpeciationName",
-                   "TADA.CharacteristicName",
-                   depthcols)
+      selcols <- c(
+        "TADA.ComparableDataIdentifier",
+        "OrganizationFormalName",
+        "ResultIdentifier",
+        "groupname",
+        "MonitoringLocationIdentifier",
+        "MonitoringLocationName",
+        "MonitoringLocationTypeName",
+        "TADA.LatitudeMeasure",
+        "TADA.LongitudeMeasure",
+        "TADA.ResultMeasureValue",
+        "TADA.ResultMeasure.MeasureUnitCode",
+        "ActivityRelativeDepthName",
+        "ActivityStartDate",
+        "ActivityStartDateTime",
+        "TADA.ActivityMediaName",
+        "ActivityMediaSubdivisionName",
+        "TADA.ResultSampleFractionText",
+        "TADA.MethodSpeciationName",
+        "TADA.CharacteristicName",
+        depthcols
+      )
 
       react$dat <- tadat$raw %>%
         dplyr::filter(TADA.Remove == FALSE, !is.na(TADA.ResultMeasureValue)) %>%
@@ -310,7 +312,7 @@ mod_figures_server <- function(id, tadat) {
     # plotly scatter plot
     output$scatter <- plotly::renderPlotly({
       shiny::req(react$plotdata)
-      suppressWarnings(TADA::TADA_Scatterplot(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname")) %>%
+      suppressWarnings(EPATADA::TADA_Scatterplot(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname")) %>%
         plotly::layout(shapes = list(
           hline(y = input$benchmark1, color = "red"),
           hline(y = input$benchmark2, color = "orange")
@@ -320,13 +322,13 @@ mod_figures_server <- function(id, tadat) {
     # plotly boxplot
     output$boxplot <- plotly::renderPlotly({
       shiny::req(react$plotdata)
-      suppressWarnings(TADA::TADA_Boxplot(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname"))
+      suppressWarnings(EPATADA::TADA_Boxplot(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname"))
     })
 
     # plotly histogram
     output$histogram <- plotly::renderPlotly({
       shiny::req(react$plotdata)
-      suppressWarnings(TADA::TADA_Histogram(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname"))
+      suppressWarnings(EPATADA::TADA_Histogram(subset(react$plotdata, react$plotdata$groupname == react$groups[1]), id_cols = "groupname"))
     })
 
     # dynamically show/hide two-char scatter
@@ -343,10 +345,11 @@ mod_figures_server <- function(id, tadat) {
     output$scatter2 <- plotly::renderPlotly({
       shiny::req(react$plotdata)
       if (length(unique(react$plotdata$groupname)) > 1) {
-      suppressWarnings(TADA::TADA_TwoCharacteristicScatterplot
-                       (react$plotdata, 
-                        id_cols = "groupname", 
-                        groups = unique(react$plotdata$groupname)))
+        suppressWarnings(EPATADA::TADA_TwoCharacteristicScatterplot
+        (react$plotdata,
+          id_cols = "groupname",
+          groups = unique(react$plotdata$groupname)
+        ))
       }
     })
   })
