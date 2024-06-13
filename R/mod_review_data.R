@@ -12,7 +12,7 @@ mod_review_data_ui <- function(id) {
   tagList(
     htmltools::h3("Removal Review"),
     htmltools::HTML(
-      "Use this tab to review flagging and filter decisions and explore the filtered dataset (still under development). Click the button below to begin."
+      "Use this tab to review flagging and filter decisions and explore the filtered dataset. Click the button below to begin."
     ),
     shiny::fluidRow(column(
       4,

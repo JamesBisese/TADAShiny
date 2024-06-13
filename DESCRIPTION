@@ -42,7 +42,9 @@ Imports:
     RColorBrewer,
     grDevices,
     lubridate,
-    plotly
+    plotly, 
+    shinyjs, 
+    lwgeom
 Remotes: 
     github::USEPA/EPATADA
 Suggests: 
@@ -54,7 +56,6 @@ Suggests:
     knitr,
     spelling,
     sf,
-    shinyjs,
     stringr,
     utils
 Depends: 
