@@ -14,15 +14,6 @@ Authors@R: c(
   role = "aut"),
   person(given = "Elise",
   family = "Hinman",
-  role = "aut"),
-  person(given = "Hillary",
-  family = "Marler",
-  role = "aut"),
-  person(given = "Shelly",
-  family = "Thawley",
-  role = "aut"),
-  person(given = "Hui",
-  family = "Zhou",
   role = "aut")
   )
 Description: Assists data partners in retrieving, wrangling, quality checking, and harmonizing data from the Water Quality Portal for subsequent analyses.
@@ -41,7 +32,7 @@ Imports:
     shinycssloaders,
     DT,
     ggplot2,
-    TADA, 
+    EPATADA, 
     shinybusy, 
     dplyr, 
     plyr,
@@ -51,9 +42,11 @@ Imports:
     RColorBrewer,
     grDevices,
     lubridate,
-    plotly
+    plotly, 
+    shinyjs, 
+    lwgeom
 Remotes: 
-    github::USEPA/TADA
+    github::USEPA/EPATADA
 Suggests: 
     config,
     testthat,
@@ -63,7 +56,6 @@ Suggests:
     knitr,
     spelling,
     sf,
-    shinyjs,
     stringr,
     utils
 Depends: 

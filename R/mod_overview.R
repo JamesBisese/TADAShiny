@@ -54,7 +54,8 @@ mod_overview_ui <- function(id) {
     ),
     htmltools::div(style = "margin-bottom:10px"),
     shiny::fluidRow(column(12, DT::DTOutput(
-      ns("overview_orgtable"), height = "500px"
+      ns("overview_orgtable"),
+      height = "500px"
     )))
   )
 }
@@ -65,10 +66,10 @@ mod_overview_ui <- function(id) {
 mod_overview_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+
     # this a reactive list created to hold all the reactive objects specific to this module.
     mapdat <- shiny::reactiveValues()
-    
+
     # create dataset for map and histogram using raw data
     shiny::observeEvent(tadat$ovgo, {
       shiny::req(tadat$raw)
@@ -122,7 +123,7 @@ mod_overview_server <- function(id, tadat) {
         tadat$orgs <- tadat$org_table$OrganizationIdentifier
       }
     })
-    
+
     # this widget produces the text at the top of the page describing record, site, and org numbers in dataset
     output$overview_totals <- shiny::renderText({
       shiny::req(mapdat$text)
@@ -142,28 +143,30 @@ mod_overview_server <- function(id, tadat) {
         "</B> unique organization(s)."
       )
     })
-    
+
     # the leaflet map
     output$overview_map <- leaflet::renderLeaflet({
       shiny::req(mapdat$text)
-      TADA::TADA_OverviewMap(tadat$raw[tadat$raw$TADA.Remove == FALSE,])
+      EPATADA::TADA_OverviewMap(tadat$raw[tadat$raw$TADA.Remove == FALSE, ])
     })
-    
+
     # histogram showing results collected over time.
     output$overview_hist <- shiny::renderPlot({
       shiny::req(mapdat$text)
       ggplot2::ggplot(data = mapdat$text, ggplot2::aes(x = as.Date(ActivityStartDate, format = "%Y-%m-%d"))) +
-        ggplot2::geom_histogram(color = "black",
-                                fill = "#005ea2",
-                                binwidth = 7) +
+        ggplot2::geom_histogram(
+          color = "black",
+          fill = "#005ea2",
+          binwidth = 7
+        ) +
         ggplot2::labs(title = "Results collected per week over date range queried", x = "Time", y = "Result Count") +
         ggplot2::theme_classic(base_size = 16)
     })
-    
+
     # organization numbers table, the editable part allows user to change only the third column (rankings)
     # https://yihui.shinyapps.io/DT-edit/
     output$overview_orgtable <- DT::renderDT(
-      tadat$org_table[,!names(tadat$org_table) %in% c("OrganizationIdentifier")],
+      tadat$org_table[, !names(tadat$org_table) %in% c("OrganizationIdentifier")],
       editable = list(target = "column", disable = list(columns = c(0, 1))),
       colnames = c(
         "Organization Name",
@@ -180,43 +183,47 @@ mod_overview_server <- function(id, tadat) {
       rownames = FALSE,
       selection = "none"
     )
-    
+
     shiny::observeEvent(input$overview_orgtable_cell_edit, {
-        org_rank <-
-          data.frame(
-            OrganizationIdentifier = tadat$org_table$OrganizationIdentifier,
-            Rank = as.numeric(input$overview_orgtable_cell_edit$value)
-          ) %>% dplyr::arrange(Rank)
-        tadat$org_table <- tadat$org_table %>%
-          dplyr::select(-Rank) %>%
-          dplyr::left_join(org_rank) %>%
-          dplyr::arrange(Rank)
-        # tadat$org_table = orgs %>% dplyr::arrange(-Result_Count) %>% dplyr::mutate("Rank" = 1:length(Result_Count))
-        tadat$orgs <- org_rank$OrganizationIdentifier
+      org_rank <-
+        data.frame(
+          OrganizationIdentifier = tadat$org_table$OrganizationIdentifier,
+          Rank = as.numeric(input$overview_orgtable_cell_edit$value)
+        ) %>% dplyr::arrange(Rank)
+      tadat$org_table <- tadat$org_table %>%
+        dplyr::select(-Rank) %>%
+        dplyr::left_join(org_rank) %>%
+        dplyr::arrange(Rank)
+      # tadat$org_table = orgs %>% dplyr::arrange(-Result_Count) %>% dplyr::mutate("Rank" = 1:length(Result_Count))
+      tadat$orgs <- org_rank$OrganizationIdentifier
     })
-    
+
     # characteristics bar chart showing top characteristics by result number in dataset
     output$overview_barchar <- shiny::renderPlot({
       shiny::req(mapdat$chars)
-      ggplot2::ggplot(mapdat$chars,
-                      ggplot2::aes(x = TADA.Chars, y = Result_Count)) +
-        ggplot2::geom_bar(stat = "identity",
-                          fill = "#005ea2",
-                          color = "black") +
-        ggplot2::labs(title = "Results per Characteristic", x = "", y = "Results Count") +
+      ggplot2::ggplot(
+        mapdat$chars,
+        ggplot2::aes(x = Result_Count, y = TADA.Chars)
+      ) +
+        ggplot2::geom_bar(
+          stat = "identity",
+          fill = "#005ea2",
+          color = "black"
+        ) +
+        ggplot2::labs(title = "Results per Characteristic", x = "Results Count", y = "") +
         ggplot2::theme_classic(base_size = 16) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
         ggplot2::geom_text(
           ggplot2::aes(
-            x = TADA.Chars,
-            y = Result_Count + (0.07 * max(Result_Count)),
+            x = Result_Count + (0.07 * max(Result_Count)),
+            y = TADA.Chars,
             label = Result_Count
           ),
           size = 5,
           color = "black"
-        ) #+
+        )
     })
-    
+
     shiny::observeEvent(input$refresh_overview, {
       shiny::req(mapdat$text)
       tadat$ovgo <- TRUE
