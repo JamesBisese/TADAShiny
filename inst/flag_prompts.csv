@@ -1,5 +1,5 @@
 Order,Level,Prompt,flagType
-1,Required,Result value is not numeric or NA and no detection limit value is provided (see TADA.ResultMeasureValueDataTypes.Flag),Result value is not numeric or NA and no detection limit value is provided
+1,Required,Result value is not numeric (text) OR result value is NA and no detection limit value is provided (see TADA.ResultMeasureValueDataTypes.Flag),Result value is not numeric or NA and no detection limit value is provided
 2,Required,Result value is not numeric or NA and the detection limit value cannot be interpreted because there is a conflict between the detection condition text and detection limit type provided by the data submitter [or the detection limit type is not in WQX domain tables (USGS/NWIS-specific)] (see TADA.CensoredData.Flag),Result value is not numeric or NA and the detection limit value cannot be interpreted because there is a conflict between the detection condition text and detection limit type provided by the data submitter [or the detection limit type is not in WQX domain tables (USGS/NWIS-specific)]
 3,Recommended,Suspect characteristic and speciation combination (see TADA.MethodSpeciation.Flag),Suspect characteristic and speciation combination
 4,Recommended,Suspect characteristic and fraction combination (see TADA.SampleFraction.Flag),Suspect characteristic and fraction combination
