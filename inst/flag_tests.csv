@@ -77,3 +77,5 @@ Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Accepte
 Suspect characteristic and fraction combination,TADA.SampleFraction.Flag,Rejected,0,1
 Metadata indicates duplicative uploads of the same results within a single organization,TADA.SingleOrgDup.Flag,Duplicate,0,1
 Metadata indicates duplicative uploads of the same results within a single organization,TADA.SingleOrgDup.Flag,Unique,0,0
+Continuous results,TADA.ContinuousData.Flag,Continuous,0,1
+Continuous results,TADA.ContinuousData.Flag,Discrete,0,0
