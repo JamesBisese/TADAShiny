@@ -185,7 +185,8 @@ mod_query_data_ui <- function(id) {
              4,
              shiny::checkboxGroupInput(ns("providers"), 
              "Data Source", 
-             c("NWIS (USGS)" = "NWIS", "WQX (EPA)" = "STORET"))
+             c("NWIS (USGS)" = "NWIS", "WQX (EPA)" = "STORET"), 
+             selected = c("NWIS", "STORET"))
       )
     ),
     shiny::fluidRow(column(

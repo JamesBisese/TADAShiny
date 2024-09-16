@@ -24,10 +24,13 @@ app_ui <- function(request) {
     # Your application UI logic
     shiny::fluidPage(
       tags$html(class = "no-js", lang = "en"),
-      HTML("<div id='eq-disclaimer-banner' class='padding-1 text-center text-white bg-secondary-dark'><strong>EPA development environment:</strong> The
-      content on this page is not production ready. This site is being used
-      for <strong>development</strong> and/or <strong>testing</strong> purposes
-      only.</div>"),
+      
+      # adds development banner
+      # HTML("<div id='eq-disclaimer-banner' class='padding-1 text-center text-white bg-secondary-dark'><strong>EPA development environment:</strong> The
+      # content on this page is not production ready. This site is being used
+      # for <strong>development</strong> and/or <strong>testing</strong> purposes
+      # only.</div>"),
+      
       # adds epa header html from here: https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html
       shiny::includeHTML(app_sys("app/www/header.html")),
       shinyjs::useShinyjs(),
