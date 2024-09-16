@@ -16,25 +16,27 @@ load("inst/extdata/query_choices.Rdata")
 # new (2024-05-23) list for new Country/Ocean(s) Query the Water Quality Portal option. Not included in saved query_choices file
 library(jsonlite)
 library(dplyr)
-url <- 'https://www.waterqualitydata.us/Codes/countrycode?mimeType=json'
-countryocean_source <- fromJSON(txt=url)
+countrycode_url <- 'https://www.waterqualitydata.us/Codes/countrycode?mimeType=json'
+countryocean_source <- fromJSON(txt=countrycode_url)
 countryocean_source <- countryocean_source$codes %>% select(-one_of('providers'))
 countryocean_source <- countryocean_source[order(countryocean_source$desc),]
 countryocean_choices <- countryocean_source$value
 names(countryocean_choices) <- countryocean_source$desc
 
-# Last run by EDH on 08/25/23
+# Last run by CAM on 09/16/24
 # county = readr::read_tsv(url("https://www2.census.gov/geo/docs/reference/codes/files/national_county.txt"), col_names = FALSE)
 # county = county%>%tidyr::separate(X1,into = c("STUSAB","STATE","COUNTY","COUNTY_NAME","COUNTY_ID"), sep=",")
 # orgs = unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/Organization.CSV"))$ID)
 # chars = unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/Characteristic.CSV"))$Name)
 # chargroup = unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/CharacteristicGroup.CSV"))$Name)
 # media = c(unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/ActivityMedia.CSV"))$Name),"water","Biological Tissue","No media")
-# # sitetype = unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/MonitoringLocationType.CSV"))$Name)
+# sitetype = unique(utils::read.csv(url("https://cdx.epa.gov/wqx/download/DomainValues/MonitoringLocationType.CSV"))$Name)
 # sitetype = c("Aggregate groundwater use","Aggregate surface-water-use","Aggregate water-use establishment","Atmosphere","Estuary","Facility","Glacier","Lake, Reservoir, Impoundment","Land","Not Assigned","Ocean","Spring","Stream","Subsurface","Well","Wetland")
 # projects = unique(data.table::fread("https://www.waterqualitydata.us/data/Project/search?mimeType=csv&zip=no&providers=NWIS&providers=STEWARDS&providers=STORET")$ProjectIdentifier)
-# mlids = unique(data.table::fread("https://www.waterqualitydata.us/data/Station/search?mimeType=csv&zip=no&providers=NWIS&providers=STEWARDS&providers=STORET")$MonitoringLocationIdentifier)
-# save(orgs, chars, chargroup, media, county, sitetype, projects, mlids, file = "inst/extdata/query_choices.Rdata")
+# # not working
+# # mlids = unique(data.table::fread("https://www.waterqualitydata.us/data/Station/search?mimeType=csv&zip=no&providers=NWIS&providers=STEWARDS&providers=STORET")$MonitoringLocationIdentifier)
+# # removing mlids for now
+# save(orgs, chars, chargroup, media, county, sitetype, projects, file = "inst/extdata/query_choices.Rdata")
 
 mod_query_data_ui <- function(id) {
   ns <- NS(id)
@@ -102,11 +104,11 @@ mod_query_data_ui <- function(id) {
       )
     ),
     shiny::fluidRow(
-      column(4, 
-             shiny::selectizeInput(ns("siteid"),
-             "Monitoring Location ID(s)",
-             choices = NULL,
-             multiple = TRUE)),
+      # column(4,
+      #        shiny::selectizeInput(ns("siteid"),
+      #        "Monitoring Location ID(s)",
+      #        choices = NULL,
+      #        multiple = TRUE)),
       column(4, 
              shiny::selectizeInput(ns("countryocean"),
              "Country/Ocean(s)", 
@@ -121,6 +123,7 @@ mod_query_data_ui <- function(id) {
           ns("org"),
           "Organization(s)",
           choices = NULL,
+          options = list(placeholder = "Start typing or use drop down menu"),
           multiple = TRUE
         )
       ),
@@ -130,6 +133,7 @@ mod_query_data_ui <- function(id) {
           ns("project"),
           "Project(s)",
           choices = NULL,
+          options = list(placeholder = "Start typing or use drop down menu"),
           multiple = TRUE
         )
       ),
@@ -139,6 +143,7 @@ mod_query_data_ui <- function(id) {
           ns("type"),
           "Site Type(s)",
           choices = c(sitetype),
+          options = list(placeholder = "Start typing or use drop down menu"),
           multiple = TRUE
         )
       )
@@ -164,20 +169,22 @@ mod_query_data_ui <- function(id) {
       column(
         4,
         shiny::selectizeInput(
-          ns("chargroup"), 
-          "Characteristic Group", 
+          ns("characteristic"),
+          "Characteristic(s)",
           choices = NULL,
+          options = list(placeholder = "Start typing or use drop down menu"),
           multiple = TRUE
-          )
+        )
       ),
       column(
         4,
         shiny::selectizeInput(
-          ns("characteristic"),
-          "Characteristic(s)",
+          ns("chargroup"), 
+          "Characteristic Group", 
           choices = NULL,
+          options = list(placeholder = "Start typing or use drop down menu"),
           multiple = TRUE
-        )
+          )
       )
     ),
     shiny::fluidRow(
@@ -323,8 +330,9 @@ mod_query_data_server <- function(id, tadat) {
       session,
       "chargroup",
       choices = c(chargroup),
-      selected = character(0),
-      options = list(placeholder = ""),
+      # selected = character(0),
+      # options = list(placeholder = ""),
+      options = list(placeholder = "Start typing or use drop down menu"),
       server = TRUE
     )
     shiny::updateSelectizeInput(session,
@@ -335,17 +343,16 @@ mod_query_data_server <- function(id, tadat) {
     shiny::updateSelectizeInput(session,
       "project",
       choices = c(projects),
-      server = TRUE
-    )
-    shiny::updateSelectizeInput(
-      session,
-      "siteid",
-      choices = c(mlids),
       options = list(placeholder = "Start typing or use drop down menu"),
       server = TRUE
     )
-
-    
+    # shiny::updateSelectizeInput(
+    #   session,
+    #   "siteid",
+    #   choices = c(mlids),
+    #   options = list(placeholder = "Start typing or use drop down menu"),
+    #   server = TRUE
+    # )
     shiny::updateSelectizeInput(
       session,
       "countryocean",
@@ -407,6 +414,11 @@ mod_query_data_server <- function(id, tadat) {
       } else {
         tadat$huc <- input$huc
       }
+      # if (is.null(input$siteid)) {
+      #   tadat$siteid <- "null"
+      # } else {
+      #   tadat$siteid <- input$siteid
+      # }
       if (is.null(input$type)) {
         tadat$siteType <- "null"
       } else {
@@ -437,12 +449,7 @@ mod_query_data_server <- function(id, tadat) {
       } else {
         tadat$organization <- input$org
       }
-      if (is.null(input$siteid)) {
-        tadat$siteid <- "null"
-      } else {
-        tadat$siteid <- input$siteid
-        # siteid = stringr::str_trim(unlist(strsplit(input$siteids,",")))
-      }
+      
       if (length(input$endDate) == 0) {
         # ensure if date is empty, the query receives a proper input ("null")
         tadat$endDate <- "null"
@@ -469,7 +476,7 @@ mod_query_data_server <- function(id, tadat) {
         countycode = tadat$countycode,
         countrycode = tadat$countrycode,
         huc = tadat$huc,
-        siteid = tadat$siteid,
+        # siteid = tadat$siteid,
         siteType = tadat$siteType,
         characteristicName = tadat$characteristicName,
         characteristicType = tadat$characteristicType,
@@ -513,12 +520,9 @@ mod_query_data_server <- function(id, tadat) {
           shiny::updateSelectizeInput(session, "state", selected = tadat$statecode)
           shiny::updateSelectizeInput(session, "county", selected = tadat$countycode)
           shiny::updateTextInput(session, "huc")
-          shiny::updateSelectizeInput(session, "siteid", selected = tadat$siteid)
+          # shiny::updateSelectizeInput(session, "siteid", selected = tadat$siteid)
           shiny::updateSelectizeInput(session, "type", selected = tadat$siteType)
-          shiny::updateSelectizeInput(session,
-            "characteristic",
-            selected = tadat$characteristicName
-          )
+          shiny::updateSelectizeInput(session, "characteristic", selected = tadat$characteristicName)
           shiny::updateSelectizeInput(session, "chargroup", selected = tadat$characteristicType)
           shiny::updateSelectizeInput(session, "media", selected = tadat$sampleMedia)
           shiny::updateSelectizeInput(session, "project", selected = tadat$project)
