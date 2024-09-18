@@ -347,7 +347,7 @@ mod_query_data_server <- function(id, tadat) {
     shiny::updateSelectizeInput(
       session,
       "siteid",
-      choices = c(mlids),
+      choices = c(mlids2),
       options = list(placeholder = "Start typing or use drop down menu"),
       server = TRUE
     )
