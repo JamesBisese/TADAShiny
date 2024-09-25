@@ -43,8 +43,7 @@ Imports:
     grDevices,
     lubridate,
     plotly, 
-    shinyjs, 
-    lwgeom
+    shinyjs
 Remotes: 
     github::USEPA/EPATADA
 Suggests: 
@@ -67,5 +66,5 @@ Config/testthat/load-all: list(export_all = FALSE, helpers = FALSE)
 LazyData: true
 URL: https://github.com/USEPA/TADAShiny
 BugReports: https://github.com/USEPA/TADAShiny/issues
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

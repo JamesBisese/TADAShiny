@@ -114,11 +114,10 @@ applyFlags <- function(in_table, orgs) {
     out <- EPATADA::TADA_FindQAPPDoc(out, clean = FALSE)
   }
 
-  # Dataset includes depth profile data - no function for this yet
-  # out <- out
-
-  # Aggregated continuous data
-  # out <- EPATADA::TADA_FlagContinuousData(out, clean = FALSE, flaggedonly = FALSE)
+  # Continuous data
+  out <- EPATADA::TADA_FlagContinuousData(out, clean = FALSE, 
+                                          flaggedonly = FALSE, 
+                                          time_difference = 4)
 
   # Above WQX Upper Threshold
   out <- EPATADA::TADA_FlagAboveThreshold(out, clean = FALSE)
