@@ -12,7 +12,20 @@ css <- "
   color: #333 !important;
   cursor: not-allowed !important;
   border-color: #F5F5F5 !important;
-}"
+}
+/* restore the left margin of the pages by overriding setting in grid.less */
+.container-fluid {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+#main  {
+  padding-left: 15px;
+}
+.row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+"
 
 app_ui <- function(request) {
   tagList(
