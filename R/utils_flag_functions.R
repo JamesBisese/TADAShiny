@@ -80,13 +80,13 @@ getCounts <- function(sites, removed_records) {
 # Settings for each flag function in flag page mock up
 applyFlags <- function(in_table, orgs) {
   out <- EPATADA::TADA_IDCensoredData(in_table)
-  # Invalid Speciation
+  # Suspect Speciation
   out <- EPATADA::TADA_FlagSpeciation(out, clean = "none")
 
-  # Invalid fraction
+  # Suspect fraction
   out <- EPATADA::TADA_FlagFraction(out, clean = FALSE)
 
-  # Invalid result unit
+  # Suspect result unit
   out <- EPATADA::TADA_FlagResultUnit(out, clean = "none")
 
   # QC rep/blank
@@ -95,7 +95,7 @@ applyFlags <- function(in_table, orgs) {
   # Result is flagged as suspect by data submitter
   out <- EPATADA::TADA_FlagMeasureQualifierCode(out, clean = FALSE, define = TRUE)
 
-  # Invalid analytical method
+  # Suspect analytical method
   out <- EPATADA::TADA_FlagMethod(out, clean = FALSE)
 
   # Single org duplicative uploads
@@ -125,7 +125,7 @@ applyFlags <- function(in_table, orgs) {
   # Below WQX Lower Threshold
   out <- EPATADA::TADA_FlagBelowThreshold(out, clean = FALSE)
 
-  # Invalid coordinates
+  # Suspect coordinates
   out <-
     EPATADA::TADA_FlagCoordinates(
       out,
