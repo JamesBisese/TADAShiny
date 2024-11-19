@@ -20,11 +20,24 @@
 ## 
 golem::fill_desc(
   pkg_name = "TADAShiny", # The Name of the package containing the App 
-  pkg_title = "TADAShiny", # The Title of the package containing the App 
-  pkg_description = "This Shiny application is the first of the Water Quality Portal TADA (Tools for Automated Data Analysis) series.", # The Description of the package containing the App 
-  author_first_name = "TADA Team", # Your First Name
-  author_last_name = "EPA", # Your Last Name
-  author_email = "mullin.cristina@epa.gov", # Your Email
+  pkg_title = "Water Quality Portal Data Discovery and Cleaning: First R Shiny App in the TADA (Tools for Automated Data Analysis) Series", # The Title of the package containing the App 
+  pkg_description = "Assists data partners in retrieving, wrangling, quality checking, and harmonizing data from the Water Quality Portal for subsequent analyses.", # The Description of the package containing the App 
+  authors = c(
+    person(given = "TADA Team", 
+           family = "U.S. Environmental Protection Agency", 
+           role = "aut", 
+           email = "mywaterway@epa.gov"),
+    person(given = "Cristina",
+           family = "Mullin",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0615-6087")),
+    person(given = "Trip",
+           family = "Hook",
+           role = "aut"),
+    person(given = "Elise",
+           family = "Hinman",
+           role = "aut")
+  ),
   repo_url = "https://github.com/USEPA/TADAShiny" # The URL of the GitHub Repo (optional) 
 )     
 
@@ -33,21 +46,21 @@ golem::set_golem_options()
 
 ## Create Common Files ----
 ## See ?usethis for more information
-usethis::use_cc0_license()  # You can set another license here
-usethis::use_readme_rmd( open = FALSE )
-usethis::use_code_of_conduct("mullin.cristina@epa.gov")
-usethis::use_lifecycle_badge( "Experimental" )
-usethis::use_news_md( open = FALSE )
+# usethis::use_cc0_license()  # You can set another license here
+# usethis::use_readme_rmd( open = FALSE )
+# usethis::use_code_of_conduct("mullin.cristina@epa.gov")
+# usethis::use_lifecycle_badge( "Experimental" )
+# usethis::use_news_md( open = FALSE )
 
 ## Use git ----
-usethis::use_git()
+# usethis::use_git()
 
 ## Init Testing Infrastructure ----
 ## Create a template for tests
-golem::use_recommended_tests()
+# golem::use_recommended_tests()
 
 ## Use Recommended Packages ----
-golem::use_recommended_deps()
+# golem::use_recommended_deps()
 
 ## Favicon ----
 # If you want to change the favicon (default is golem's one)
