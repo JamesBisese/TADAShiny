@@ -25,11 +25,11 @@ golem::fill_desc(
   authors = c(
     person(given = "TADA Team", 
            family = "U.S. Environmental Protection Agency", 
-           role = "aut", 
-           email = "mywaterway@epa.gov"),
+           role = "aut"),
     person(given = "Cristina",
            family = "Mullin",
            role = c("aut", "cre"),
+           email = "mywaterway@epa.gov",
            comment = c(ORCID = "0000-0002-0615-6087")),
     person(given = "Trip",
            family = "Hook",
