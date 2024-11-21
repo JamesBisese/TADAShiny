@@ -9,7 +9,7 @@ Order,Level,Prompt,flagType
 8,Optional,Metadata indicates duplicative uploads of the same results within a single organization (see TADA.SingleOrgDup.Flag),Single org duplicates
 9,Optional,Metadata indicates duplicative uploads of the same results by multiple organizations (see TADA.ResultSelectedMultipleOrgs),Metadata indicates duplicative uploads of the same results by multiple organizations
 10,Optional,Uncommon or suspect characteristic and analytical method combination (see TADA.AnalyticalMethod.Flag),Uncommon or suspect characteristic and analytical method combination
-11,Optional,"Quality Assurance Project Plan (QAPPApprovedIndicator) indicates ""N"" (not approved) or NA",No approved QAPP
+11,Optional,"Quality Assurance Project Plan (QAPPApprovedIndicator) indicates ""N"" (not approved) or NA",QAPP not approved or NA
 12,Optional,Quality Assurance Project Plan (QAPP) document is not available via the ProjectFileUrl (see TADA.QAPPDocAvailable),Missing QAPP doc
 13,Optional,"Result value(s) above the national threshold for a given characteristic, possibly indicating non-sensical value(s) (see TADA.ResultValueAboveUpperThreshold.Flag)",Above upper threshold
 14,Optional,"Result value(s) below the national threshold for a given characteristic, possibly indicating non-sensical value(s) (see TADA.ResultValueBelowLowerThreshold.Flag)",Below lower threshold
