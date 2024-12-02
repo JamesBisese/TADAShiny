@@ -285,7 +285,7 @@ mod_query_data_server <- function(id, tadat) {
       readFile(tadat, input$progress_file$datapath)
     })
 
-    # if user presses example data button, make tadat$raw the nutrients dataset contained within the TADA package.
+    # if user presses example data button, make tadat$raw the one of the example_data contained within the TADA package.
     shiny::observeEvent(input$example_data_go, {
       # a modal that pops up showing it's working on querying the portal
       shinybusy::show_modal_spinner(
