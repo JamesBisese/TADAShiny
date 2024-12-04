@@ -1,0 +1,81 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+2.  Make sure your local files are up-to-date by fetching origin (develop
+    branch) before creating the new branch
+
+3.  Create a new branch
+
+4.  Ensure working directory is the top folder of the package (TADAShiny folder)
+
+5.  getwd() [1] "C:/Data_and_Tools/tada/working/app/TADAShiny"
+
+If necessary
+
+setwd("C:/Data_and_Tools/tada/working/app/TADAShiny")
+setwd("C:/Data_and_Tools/tada/working/app/canonical/TADAShiny")
+
+```         
+Note:   This should always be the case when working in an R project
+```
+
+5.  TADAShiny is built using the Golem framework for development
+6.  Thus, it is an R package and R Shiny app so you can use devtools to getting
+    into dev mode. library(devtools) #at start load_all() #at start
+    options(shiny.launch.browser = .rs.invokeShinyWindowExternal) \# run this
+    before starting the app to run in default browswer TADAShiny::run_app() \#
+    actually run the app and display in built-in browser
+
+document() #after you make changes, run frequently, run before PR
+devtools::check() frequently (or at least at the end before making a pull
+request) to ensure package passes all tests 13. When ready, create a pull
+request to merge changes into the develop branch. Assign reviewers. Link pull
+request to relevant issue(s) in GitHub if applicable.
+
+# paste this in the Console first
+
+library(devtools); load_all(); options(shiny.launch.browser = .rs.invokeShinyWindowExternal);
+
+# then run the app using this
+
+TADAShiny::run_app()
+
+# settled on this
+
+document(); TADAShiny::run_app();
+
+document("C:/Data_and_Tools/tada/working/app/EPATADA")
+document("C:/Data_and_Tools/tada/working/app/canonical/EPATADA")
+
+document("C:/Data_and_Tools/tada/working/app/TADAShiny")
+document("C:/Data_and_Tools/tada/working/app/canonical/TADAShiny")
+
+# found this, which does break, but I can't figure out where the break happened
+
+> options(shiny.error = browser)
+
+install.packages("USEPA/EPATADA", lib = "C:\\Data_and_Tools\\tada\\working\\app\\library")
+
+> new_path = "C:/Data_and_Tools/tada/working/library" .libPaths(c(.libPaths(),
+> "C:/Data_and_Tools/tada/working/library")) print(.libPaths()) [1]
+> "C:/software/R/R-4.3.3/library" "C:/Data_and_Tools/tada/working/library"
+
+document("C:/Data_and_Tools/tada/working/app/TADA")
+
+I found this problem - when I get this error
+
+```         
+Error: (converted from warning)
+```
+
+This is a setting that I must have run at some time - setting it to something
+higher than 1 - and thus I'm getting all these errors that should be warnings.
+
+I had to run this
+
+```         
+options(warn = 1)
+```

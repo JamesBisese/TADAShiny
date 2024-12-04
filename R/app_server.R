@@ -40,13 +40,21 @@ app_server <- function(input, output, session) {
   tadat$default_outfile <- paste0("tada_output_", job_id)
   tadat$job_id <- job_id
 
-  # switch to overview tab when tadat$new changes and provide user with window letting them know how many records were automatically flagged for removal upon upload
+  # switch to overview tab when tadat$new changes and provide user with window 
+  # letting them know how many records were automatically flagged for removal upon upload
   # move this to query_data?
   shiny::observeEvent(tadat$new, {
     shiny::showModal(shiny::modalDialog(
       title = "Data Loaded",
-      "Your data were successfully loaded into the app and are displayed on the Overview tab. The following data wrangling steps were performed automatically when data was loaded: 1) created TADA versions of a subset of columns for editing (originals are retained), 2) handled/flagged special characters and text in result values and units, 3) harmonized result and depth units to TADA defaults, and 4) replaced retired characteristic names with current names. See summary information about your dataset in the gray box at the bottom of the app."
+      "Your data were successfully loaded into the app and are displayed on the Overview tab. 
+      The following data wrangling steps were performed automatically when data was loaded: 1) 
+      created TADA versions of a subset of columns for editing (originals are retained), 
+      2) handled/flagged special characters and text in result values and units, 
+      3) harmonized result and depth units to TADA defaults, and 
+      4) replaced retired characteristic names with current names. 
+      See summary information about your dataset in the gray box at the bottom of the app."
     ))
+    # browser()
     shiny::updateTabsetPanel(session = session, inputId = "tabbar", selected = "Overview")
     tadat$new <- NULL
   })

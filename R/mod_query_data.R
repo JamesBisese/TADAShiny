@@ -49,16 +49,20 @@ mod_query_data_ui <- function(id) {
           "Nutrients Utah (15k results)",
           "Shepherdstown (34k results)",
           "Tribal (132k results)"
-        )
+        ),
+        selected = NULL,
+        multiple = F
       ))
     ),
-    shiny::fluidRow(column(
-      3,
-      shiny::actionButton(
-        ns("example_data_go"),
-        "Load",
-        shiny::icon("truck-ramp-box"),
-        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+    shiny::fluidRow(
+      column(
+        6,
+        shiny::actionButton(
+          ns("example_data_go"),
+          "Load",
+          shiny::icon("truck-ramp-box"),
+          disabled = TRUE,
+          style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
       )
     )),
     htmltools::hr(),
@@ -188,10 +192,9 @@ mod_query_data_ui <- function(id) {
     shiny::fluidRow(
       column(
              4,
-             shiny::checkboxGroupInput(ns("providers"), 
+             shiny::radioButtons(ns("providers"), 
              "Data Source", 
-             c("NWIS (USGS)" = "NWIS", "WQX (EPA)" = "STORET"), 
-             selected = c("NWIS", "STORET"))
+             c("NWIS (USGS)" = "NWIS", "WQX (EPA)" = "STORET", "Both (NWIS and WQX)" = "all"), selected = "all")
       )
     ),
     shiny::fluidRow(column(
@@ -203,13 +206,13 @@ mod_query_data_ui <- function(id) {
     htmltools::hr(),
     shiny::fluidRow(
       htmltools::h3("Option C: Upload dataset"),
-      htmltools::HTML((
+      htmltools::HTML(
         "Upload a dataset from your computer. This upload feature only accepts data in .xls and .xlsx formats.
                                     The file can be a <B>fresh</B> TADA dataset or a <B>working</B> TADA dataset that you are returning to the
                                     app to iterate on. Data must also be formatted in the EPA Water Quality eXchange (WQX) schema to leverage
                                     this tool. You may reach out to the WQX helpdesk at WQX@epa.gov for assistance preparing and submitting your data
                                     to the WQP through EPA's WQX."
-      )),
+      ),
       # widget to upload WQP profile or WQX formatted spreadsheet
       column(
         9,
@@ -220,6 +223,20 @@ mod_query_data_ui <- function(id) {
           accept = c(".xlsx", ".xls"),
           width = "100%"
         )
+      )
+    ),
+    shiny::fluidRow(
+        htmltools::HTML(
+          "Download a TDATA dataset template in .xlsx format. This download template can be used to prepare datasets for Upload.
+          You may reach out to the WQX helpdesk at WQX@epa.gov for assistance preparing and submitting your data
+          to the WQP through EPA's WQX.<br><br>"
+        ),
+        column(
+        9,
+        shiny::downloadButton(
+          ns("download_template"), 
+          "Download Template", 
+          style = "color: #fff; background-color: #337ab7; border-color: #2e6da4;")
       )
     ),
     htmltools::hr(),
@@ -256,6 +273,36 @@ mod_query_data_server <- function(id, tadat) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # https://stackoverflow.com/questions/24175997/force-no-default-selection-in-selectinput
+    shiny::observeEvent(input$example_data, {
+      
+      if (!is.na(input$example_data) && nchar(input$example_data) > 1) {
+
+          shinyjs::enable("example_data_go")
+        
+      } 
+    })
+    
+    # template used for importing data to TADAShiny
+    template_data <- reactive(EPATADA::TADA_GetTemplate())
+    
+    # return an ms excel file with the template columns
+    output$download_template <- shiny::downloadHandler(
+        filename = function() { 
+          paste0("tada_template", ".xlsx")
+        },
+        content = function(file) {
+          # format csv.  contentType = "text/csv"
+          # write.csv(template_data(), file)
+          # browser()
+          # format excel (xlsx)
+          d = template_data()
+          writexl::write_xlsx(d, path = file)
+        },
+        contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+     )        
+    # })
+    
     # read in the excel spreadsheet dataset if this input reactive object is populated via fileInput and define as tadat$raw
     shiny::observeEvent(input$file, {
       # a modal that pops up showing it's working on querying the portal
@@ -269,7 +316,9 @@ mod_query_data_server <- function(id, tadat) {
       # user uploaded data
       raw <-
         suppressWarnings(readxl::read_excel(input$file$datapath, sheet = 1))
+      
       raw$TADA.Remove <- NULL
+      browser()
       initializeTable(tadat, raw)
       if (!is.null(tadat$original_source)) {
         tadat$original_source <- "Upload"
@@ -282,6 +331,7 @@ mod_query_data_server <- function(id, tadat) {
     shiny::observe({
       shiny::req(input$progress_file)
       # user uploaded data
+      browser() # debugging fatal crash when a column is missing
       readFile(tadat, input$progress_file$datapath)
     })
 
@@ -380,7 +430,6 @@ mod_query_data_server <- function(id, tadat) {
     # remove the modal once the dataset has been pulled
     shinybusy::remove_modal_spinner(session = shiny::getDefaultReactiveDomain())
 
-
     # this event observer is triggered when the user hits the "Query Now" button, and then runs the TADAdataRetrieval function
     shiny::observeEvent(input$querynow, {
       tadat$original_source <- "Query"
@@ -393,6 +442,7 @@ mod_query_data_server <- function(id, tadat) {
       }
       if (input$county == "") {
         tadat$countycode <- "null"
+        tadat$countycode <- "null"
       } else {
         tadat$countycode <- input$county
       }
@@ -402,7 +452,8 @@ mod_query_data_server <- function(id, tadat) {
       } else {
         tadat$countrycode <- input$countryocean
       }
-      if (is.null(input$providers)) {
+
+      if (is.null(input$providers) | input$providers == "all") {
         tadat$providers <- "null"
       } else {
         tadat$providers <- input$providers

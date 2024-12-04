@@ -8,6 +8,7 @@
 #'
 #' @importFrom shiny NS tagList
 
+# Non-Detect Handling Method (options)
 nd_method_options <-
   c(
     "Multiply detection limit by x",
@@ -47,6 +48,7 @@ mod_censored_data_ui <- function(id) {
           options = list(maxItems = 1)
         )
       ),
+      # non-detect multiplier
       column(3, shiny::uiOutput(ns("nd_mult"))),
       column(
         3,
@@ -234,6 +236,10 @@ mod_censored_data_server <- function(id, tadat) {
         text = "Applying selected methods...",
         session = shiny::getDefaultReactiveDomain()
       )
+      # disable the button and the Muliplier(x) text input so the user can not redo the handling
+      shinyjs::disable("apply_methods")
+      shinyjs::disable("nd_mult")
+      
       removed <-
         subset(tadat$raw, tadat$raw$TADA.Remove == TRUE) # first, remove results we dont want to handle at all
       good <-
@@ -309,10 +315,15 @@ mod_censored_data_server <- function(id, tadat) {
           tadat$raw$TADA.DetectionQuantitationLimitMeasure.MeasureValue,
           tadat$raw$TADA.ResultMeasureValue
         ) # reset to detection quantitation limit value
-      tadat$raw$TADA.ResultMeasureValueDataTypes.Flag[tadat$raw$TADA.ResultMeasureValueDataTypes.Flag == "Result Value/Unit Estimated from Detection Limit"] <-
-        "Result Value/Unit Copied from Detection Limit" # reset data types flag to what it was before simpleCensoredMethods function run
+      tadat$raw$TADA.ResultMeasureValueDataTypes.Flag[
+        tadat$raw$TADA.ResultMeasureValueDataTypes.Flag == "Result Value/Unit Estimated from Detection Limit"] <-
+          "Result Value/Unit Copied from Detection Limit" # reset data types flag to what it was before simpleCensoredMethods function run
       tadat$raw <- tadat$raw %>% dplyr::select(-TADA.CensoredMethod)
       tadat$censor_applied <- FALSE
+      
+      # (re)enable the button so the user can redo the handling
+      shinyjs::enable("apply_methods")
+      shinyjs::enable("nd_mult")
     })
 
     # creates a nice table showing an example of how censored data were changed.

@@ -15,3 +15,6 @@ README.Rmd
 ^app\.R$
 ^rsconnect$
 ^LICENSE\.md$
+saved.Rhistory
+^\.idea$
+^\.devcontainer$
